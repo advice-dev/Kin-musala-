@@ -3,211 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KIN MUSALA</title>
+    <title>KIN MUSALA ELITE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; }
+        body { background: var(--bg); color: var(--text); }
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
         .page.active { display: block; }
-        
-        /* Formulaires */
-        .photo-picker { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; background: #000; }
-        .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
-        .btn-red { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
-        
-        /* Navigation */
+        .btn-red { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
         .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav i { font-size: 1.4rem; color: #555; cursor: pointer; }
-        .nav i.active { color: var(--primary); }
-
-        /* Chat & Listes */
-        .user-card { display: flex; align-items: center; gap: 15px; background: var(--surface); padding: 15px; border-radius: 15px; margin-top: 10px; }
-        .user-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
-        #chatFlow { height: 55vh; overflow-y: auto; display: flex; flex-direction: column; padding: 10px 0; }
-        .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; line-height: 1.4; }
-        .msg.mine { align-self: flex-end; background: var(--primary); }
+        .nav i { font-size: 1.4rem; color: #555; } .nav i.active { color: var(--primary); }
+        .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; }
+        .msg.mine { align-self: flex-end; background: var(--primary); margin-left: auto; }
         .msg.theirs { align-self: flex-start; background: var(--surface); }
+        .order-box { background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin: 10px 0; }
+        .mission-badge { background: var(--primary); padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align:center; margin-top:20vh;">
-        <h1 style="font-size:3.5rem; font-weight:900;">KIN MUSALA</h1>
-        <button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button>
-        <button class="btn-red" style="background:#222; margin-top:15px;" onclick="showAuth('login')">DÉJÀ UN COMPTE ? SE CONNECTER</button>
-    </div>
+    <div style="text-align:center; margin-top:20vh;"><h1 style="font-size:3rem; font-weight:900;">KIN MUSALA</h1><button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button><button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button></div>
 </div>
 
 <div id="auth" class="page">
-    <h2 id="authTitle" style="text-align:center; margin-bottom:20px;">Inscription</h2>
-    
-    <div id="registrationOnly">
-        <div class="photo-picker" onclick="document.getElementById('fInp').click()">
-            <i class="fa fa-camera"></i>
-            <img id="pview" style="display:none;">
-        </div>
+    <div id="regFields">
+        <div style="text-align:center;"><img id="pview" style="width:100px; height:100px; border-radius:50%; object-fit:cover; display:none; margin:10px auto; border:2px solid var(--primary);"></div>
+        <button class="btn-red" style="background:#333;" onclick="document.getElementById('fInp').click()">PHOTO</button>
         <input type="file" id="fInp" hidden accept="image/*">
-        <input type="text" id="regName" placeholder="Nom complet" class="field">
-        <select id="regRole" class="field" onchange="toggleJob()">
-            <option value="client">Je suis un Client</option>
-            <option value="freelance">Je suis un Freelance</option>
-        </select>
-        <input type="text" id="regJob" placeholder="Votre métier (ex: Électricien)" class="field" style="display:none;">
-        <input type="text" id="regPhone" placeholder="Numéro M-Pesa / Orange" class="field">
+        <input type="text" id="rName" placeholder="Nom complet" class="field">
+        <select id="rRole" class="field" onchange="document.getElementById('rJob').style.display=this.value==='freelance'?'block':'none'"><option value="client">Client</option><option value="freelance">Freelance</option></select>
+        <input type="text" id="rJob" placeholder="Métier (ex: Maçon)" class="field" style="display:none;">
     </div>
-
-    <input type="email" id="authEmail" placeholder="Email" class="field">
-    <input type="password" id="authPass" placeholder="Mot de passe" class="field">
-    
-    <button class="btn-red" onclick="handleAuth()">CONFIRMER</button>
-    <p onclick="pg('hero')" style="text-align:center; margin-top:15px; font-size:0.8rem; opacity:0.6;">Retour</p>
+    <input type="email" id="aEmail" placeholder="Email" class="field"><input type="password" id="aPass" placeholder="Mdp" class="field">
+    <button class="btn-red" onclick="handleAuth()">VALIDER</button>
 </div>
 
 <div id="explore" class="page">
-    <input type="text" id="search" placeholder="Rechercher un métier (ex: Plombier)..." class="field" onkeyup="search()">
-    <div id="userList"></div>
+    <input type="text" id="srch" placeholder="Rechercher un métier..." class="field" onkeyup="search()">
+    <div id="uList"></div>
 </div>
 
-<div id="msg_list" class="page">
-    <h2 style="margin-bottom:20px;">Messages</h2>
-    <div id="conversations"></div>
-</div>
+<div id="msg_list" class="page"><h2>Messages</h2><div id="convs"></div></div>
 
 <div id="chat" class="page">
     <div style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #333; padding-bottom:10px;">
-        <i class="fa fa-arrow-left" onclick="pg('explore')"></i>
-        <img id="peerImg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-        <b id="peerName">...</b>
+        <i class="fa fa-arrow-left" onclick="pg('msg_list')"></i><img id="pImg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"><b id="pName">...</b>
     </div>
-    <div id="chatFlow"></div>
+    <div id="chatFlow" style="height:55vh; overflow-y:auto; display:flex; flex-direction:column; padding:15px 0;"></div>
+    <div id="chatActions"></div>
     <div style="display:flex; gap:10px;">
-        <input type="text" id="msgInp" class="field" style="margin:0; flex:1;" placeholder="Message...">
-        <button class="btn-red" style="width:60px; margin:0;" onclick="sendMsg()"><i class="fa fa-paper-plane"></i></button>
+        <input type="text" id="mInp" class="field" style="margin:0; flex:1;" placeholder="Message..."><button class="btn-red" style="width:50px; margin:0;" onclick="send()"><i class="fa fa-paper-plane"></i></button>
     </div>
 </div>
 
 <div id="account" class="page">
-    <div id="profileHeader" style="text-align:center;"></div>
+    <div id="myProf" style="text-align:center;"></div>
+    <button class="btn-red" onclick="editProfile()">MODIFIER MON PROFIL</button>
+    <div id="myMissions" style="margin-top:20px;"></div>
     <button class="btn-red" style="background:#333; margin-top:20px;" onclick="location.reload()">DÉCONNEXION</button>
 </div>
 
-<div id="nav" class="nav" style="display:none;">
-    <i class="fa fa-search active" onclick="tab('explore', this)"></i>
-    <i class="fa fa-comment" onclick="tab('msg_list', this)"></i>
-    <i class="fa fa-user" onclick="tab('account', this)"></i>
-</div>
+<div id="nav" class="nav" style="display:none;"><i class="fa fa-search active" onclick="tab('explore',this)"></i><i class="fa fa-comment" onclick="tab('msg_list',this)"></i><i class="fa fa-user" onclick="tab('account',this)"></i></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const cfg = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
+    const app = initializeApp(cfg); const auth = getAuth(app); const db = getFirestore(app);
+    let me = null, peer = null, photo = "", sub = null;
 
-    let me = null, peer = null, photoData = "", chatSub = null;
-
-    // Gestion Photo
-    document.getElementById('fInp').onchange = (e) => {
-        const r = new FileReader(); r.onload = () => { photoData = r.result; document.getElementById('pview').src = photoData; document.getElementById('pview').style.display='block'; }; r.readAsDataURL(e.target.files[0]);
-    };
-
-    window.toggleJob = () => { document.getElementById('regJob').style.display = document.getElementById('regRole').value === 'freelance' ? 'block' : 'none'; };
-
-    window.showAuth = (mode) => {
-        document.getElementById('registrationOnly').style.display = mode === 'signup' ? 'block' : 'none';
-        document.getElementById('authTitle').innerText = mode === 'signup' ? 'Inscription' : 'Connexion';
-        pg('auth');
-    };
-
+    document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload=()=>{photo=r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block';}; r.readAsDataURL(e.target.files[0]); };
+    window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
     window.handleAuth = async () => {
-        const email = document.getElementById('authEmail').value, pass = document.getElementById('authPass').value;
-        if(!email || !pass) return alert("Remplissez tout !");
+        const email = document.getElementById('aEmail').value, pass = document.getElementById('aPass').value;
         try {
-            if(document.getElementById('registrationOnly').style.display !== 'none') {
+            if(document.getElementById('regFields').style.display !== 'none'){
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                me = { uid: res.user.uid, name: document.getElementById('regName').value, role: document.getElementById('regRole').value, job: document.getElementById('regJob').value, phone: document.getElementById('regPhone').value, photo: photoData };
+                me = { uid: res.user.uid, name: document.getElementById('rName').value, role: document.getElementById('rRole').value, job: document.getElementById('rJob').value, photo: photo, status: "Libre" };
                 await setDoc(doc(db, "users", res.user.uid), me);
             } else { await signInWithEmailAndPassword(auth, email, pass); }
         } catch (e) { alert(e.message); }
     };
 
-    onAuthStateChanged(auth, async (user) => {
-        if(user) {
-            const snap = await getDoc(doc(db, "users", user.uid));
-            me = snap.data();
-            document.getElementById('nav').style.display = 'flex';
-            renderMyAccount(); loadUsers(); loadConversations(); pg('explore');
-        }
+    onAuthStateChanged(auth, async (u) => {
+        if(u) { const s = await getDoc(doc(db, "users", u.uid)); me = s.data(); document.getElementById('nav').style.display='flex'; pg('explore'); loadUsers(); loadConvs(); renderAcc(); }
     });
 
     function loadUsers() {
         onSnapshot(collection(db, "users"), (snap) => {
-            const list = document.getElementById('userList'); list.innerHTML = "";
-            snap.forEach(d => {
-                const u = d.data();
-                if(u.uid !== me.uid && u.role !== me.role) {
-                    list.innerHTML += `<div class="user-card" onclick="openChat('${u.uid}')"><img src="${u.photo}"><div><b>${u.name}</b><br><small>${u.job || u.role}</small></div></div>`;
-                }
-            });
+            const l = document.getElementById('uList'); l.innerHTML = "";
+            snap.forEach(d => { const u = d.data(); if(u.uid !== me.uid && u.role !== me.role) {
+                l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`;
+            }});
         });
     }
 
-    function loadConversations() {
+    function loadConvs() {
         onSnapshot(query(collection(db, "messages"), orderBy("time", "desc")), async (snap) => {
-            const list = document.getElementById('conversations'); 
-            const seen = new Set(); list.innerHTML = "";
+            const l = document.getElementById('convs'); const seen = new Set(); l.innerHTML = "";
             for (const d of snap.docs) {
-                const m = d.data();
-                const target = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null);
-                if(target && !seen.has(target)) {
-                    seen.add(target);
-                    const u = (await getDoc(doc(db, "users", target))).data();
-                    list.innerHTML += `<div class="user-card" onclick="openChat('${u.uid}')"><img src="${u.photo}"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`;
-                }
+                const m = d.data(); const t = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null);
+                if(t && !seen.has(t)) { seen.add(t); const u = (await getDoc(doc(db, "users", t))).data();
+                l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`; }
             }
         });
     }
 
     window.openChat = async (id) => {
         const s = await getDoc(doc(db, "users", id)); peer = s.data();
-        document.getElementById('peerImg').src = peer.photo;
-        document.getElementById('peerName').innerText = peer.name;
-        pg('chat'); if(chatSub) chatSub();
-        chatSub = onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => {
-            const flow = document.getElementById('chatFlow'); flow.innerHTML = "";
+        document.getElementById('pImg').src = peer.photo; document.getElementById('pName').innerText = peer.name;
+        pg('chat'); if(sub) sub();
+        sub = onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => {
+            const f = document.getElementById('chatFlow'); f.innerHTML = "";
+            const act = document.getElementById('chatActions'); act.innerHTML = me.role==='client' ? `<button class="btn-red" onclick="sendOrder()">LANCER LA MISSION</button>` : "";
             snap.forEach(d => {
-                const m = d.data();
-                if((m.from === me.uid && m.to === peer.uid) || (m.from === peer.uid && m.to === me.uid)) {
-                    flow.innerHTML += `<div class="msg ${m.from === me.uid ? 'mine':'theirs'}">${m.text}</div>`;
+                const m = d.data(); if((m.from === me.uid && m.to === peer.uid) || (m.from === peer.uid && m.to === me.uid)) {
+                    if(m.type === 'order' && m.status === 'pending' && me.role === 'freelance') {
+                        f.innerHTML += `<div class="order-box">MISSION DE ${peer.name}<br><button onclick="ans('${d.id}','accept')">ACCEPTER</button> <button onclick="ans('${d.id}','refuse')">REFUSER</button></div>`;
+                    } else { f.innerHTML += `<div class="msg ${m.from === me.uid ? 'mine':'theirs'}">${m.text}</div>`; }
+                    if(m.status === 'accept') { 
+                        act.innerHTML = me.role==='client' ? `<button class="btn-red" onclick="finish('${d.id}')">TERMINER ET NOTER</button>` : `<div class="mission-badge">TRAVAIL EN COURS POUR ${peer.name}</div>`;
+                        if(me.role==='freelance') document.getElementById('myMissions').innerHTML = `<div class="mission-badge">1 MISSION EN COURS : ${peer.name}</div>`;
+                    }
                 }
             });
-            flow.scrollTop = flow.scrollHeight;
+            f.scrollTop = f.scrollHeight;
         });
     };
 
-    window.sendMsg = async () => {
-        const t = document.getElementById('msgInp').value; if(!t) return;
-        await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: t, time: Date.now() });
-        document.getElementById('msgInp').value = "";
-    };
-
-    window.search = () => {
-        const val = document.getElementById('search').value.toLowerCase();
-        document.querySelectorAll('#userList .user-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(val) ? 'flex' : 'none');
-    };
-
-    function renderMyAccount() {
-        document.getElementById('profileHeader').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p>`;
-    }
-
+    window.send = async () => { const t = document.getElementById('mInp').value; if(!t) return; await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: t, time: Date.now() }); document.getElementById('mInp').value = ""; };
+    window.sendOrder = async () => { await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, type: 'order', status: 'pending', text: "Offre de mission envoyée", time: Date.now() }); };
+    window.ans = async (id, s) => { await updateDoc(doc(db, "messages", id), { status: s }); await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: s==='accept'?"J'ACCEPTE ✅":"JE REFUSE ❌", time: Date.now() }); };
+    window.finish = async (id) => { const n = prompt("Note /10 ?"); alert("Mission close ! Payez au 0813339164"); await updateDoc(doc(db, "messages", id), { status: 'done' }); };
+    window.editProfile = async () => { const n = prompt("Nouveau nom ?", me.name); if(n) { await updateDoc(doc(db, "users", me.uid), { name: n }); location.reload(); } };
+    function renderAcc() { document.getElementById('myProf').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p>`; }
     window.pg = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
     window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); pg(id); };
 </script>
