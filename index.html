@@ -7,136 +7,114 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { 
-            --primary: #FF4B3A; 
-            --bg-start: #1A1C29; 
-            --bg-end: #0D0E14;   
-            --surface: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #FFFFFF;
-        }
+        :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; }
         
-        .page { display: none; padding: 20px 5% 100px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Bouton Caméra exact (Photo 5) */
-        .photo-picker {
-            width: 140px; height: 140px; border-radius: 50%;
-            background: #000; border: 3px dashed var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 30px; cursor: pointer; position: relative; overflow: hidden;
+        /* Photo de profil (Cercle noir, bordure rouge pointillée) */
+        .photo-circle {
+            width: 130px; height: 130px; border-radius: 50%;
+            border: 3px dashed var(--primary); background: #000;
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; position: relative; overflow: hidden;
         }
-        .photo-picker i { font-size: 3rem; color: var(--primary); }
-        .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
+        .photo-circle img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .photo-circle i { font-size: 2.5rem; color: var(--primary); }
 
-        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
-        .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:18px; font-weight:700; width:100%; cursor:pointer; }
-        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; outline: none; }
+        .btn-red { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 15px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .input-field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
 
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid var(--border); z-index: 100; }
-        .nav-item { color: rgba(255,255,255,0.5); font-size: 1.2rem; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-
-        /* Chat & Mission */
-        .mission-header { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; margin-bottom: 15px; }
-        .chat-footer { position: fixed; bottom: 70px; width: 100%; max-width: 500px; padding: 15px; background: #0D0E14; display: flex; align-items: center; gap: 15px; }
-        .chat-footer i { font-size: 1.3rem; color: var(--text); cursor: pointer; }
-        
-        /* Recherche */
-        .search-container { position: relative; margin-bottom: 20px; }
-        .search-container i { position: absolute; left: 15px; top: 18px; color: var(--primary); }
-        .search-input { width: 100%; padding: 16px 16px 16px 45px; border-radius: 15px; background: var(--surface); border: 1px solid var(--border); color: white; }
+        /* Barre Mission & Navigation */
+        .mission-bar { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; font-size: 0.9rem; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
+        .chat-footer { position: fixed; bottom: 75px; width: 100%; max-width: 500px; padding: 15px; background: var(--bg); display: flex; align-items: center; gap: 10px; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align: center; padding-top: 10vh;">
-        <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;">KIN<br>MUSALA.</h1>
-        <p style="opacity: 0.7; margin: 20px 0 40px;">Connectez-vous à l'élite via notre messagerie sécurisée.</p>
-        <button class="btn-primary" onclick="showReg('client')" style="margin-bottom:15px;">Trouver un Expert</button>
-        <button class="btn-outline" onclick="showReg('freelance')">Devenir Freelance</button>
+    <div style="text-align: center; margin-top: 15vh;">
+        <h1 style="font-size: 3.5rem; font-weight: 900; line-height: 1;">KIN<br>MUSALA</h1>
+        <p style="margin: 20px 0 40px; opacity: 0.7;">Networking Elite de Kinshasa</p>
+        <button class="btn-red" onclick="openAuth('signup')">S'inscrire</button>
+        <button class="btn-outline" onclick="openAuth('login')">Se connecter</button>
     </div>
 </div>
 
-<div id="signup" class="page">
-    <div class="photo-picker" onclick="document.getElementById('gallery-input').click()">
-        <i class="fa fa-camera" id="icon-cam"></i>
-        <img id="img-preview" style="display:none;">
-    </div>
-    <input type="file" id="gallery-input" style="display:none;" accept="image/*">
+<div id="auth-page" class="page">
+    <h2 id="auth-title" style="text-align:center; margin-bottom:20px;">Inscription</h2>
     
-    <input type="text" id="reg-name" placeholder="Nom complet" class="field">
-    <input type="email" id="reg-email" placeholder="Email" class="field">
-    <input type="password" id="reg-pass" placeholder="Mot de passe" class="field">
-    <input type="text" id="reg-mpesa" placeholder="Numéro M-Pesa / Airtel Money" class="field">
-    
-    <div id="f-only" style="display:none;">
-        <input type="text" id="reg-job" placeholder="Votre métier" class="field">
+    <div id="signup-only">
+        <div class="photo-circle" onclick="document.getElementById('fileInput').click()">
+            <i class="fa fa-camera" id="camIcon"></i>
+            <img id="imgPrev" style="display:none;">
+        </div>
+        <input type="file" id="fileInput" hidden accept="image/*">
+        <input type="text" id="regName" placeholder="Nom Complet" class="input-field">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <button class="btn-outline" style="flex:1;" onclick="setRole('client')">Client</button>
+            <button class="btn-outline" style="flex:1;" onclick="setRole('freelance')">Freelance</button>
+        </div>
+        <input type="text" id="regMpesa" placeholder="Numéro M-Pesa" class="input-field">
     </div>
-    <button class="btn-primary" onclick="handleSignup()">Créer mon compte</button>
+
+    <input type="email" id="authEmail" placeholder="Email" class="input-field">
+    <input type="password" id="authPass" placeholder="Mot de passe" class="input-field">
+    
+    <button class="btn-red" id="authBtn" onclick="handleAuth()">Valider</button>
+    <p onclick="toggleAuthMode()" style="text-align:center; margin-top:20px; font-size:0.8rem; opacity:0.6; cursor:pointer;">Changer de mode (Connexion/Inscription)</p>
 </div>
 
 <div id="explore" class="page">
-    <div class="search-container">
+    <div class="input-field" style="display:flex; align-items:center;">
         <i class="fa fa-search"></i>
-        <input type="text" class="search-input" placeholder="Recherche intelligente..." onkeyup="filterUsers()">
+        <input type="text" id="searchInp" placeholder="Recherche intelligente..." style="background:transparent; border:none; color:white; margin-left:10px; width:100%; outline:none;" onkeyup="filterUsers()">
     </div>
-    <div id="users-list">
-        </div>
+    <div id="userList"></div>
 </div>
 
-<div id="chat-ui" class="page">
-    <div id="task-bar" style="display:none;" class="mission-header">
-        <span>TÂCHE EN COURS...</span>
-        <button onclick="confirmEndTask()" style="background:white; color:var(--primary); border:none; padding:5px 12px; border-radius:5px; font-weight:900;">TERMINER</button>
+<div id="chat" class="page">
+    <div id="missionActive" style="display:none;" class="mission-bar">
+        <span>⚡ TÂCHE EN COURS</span>
+        <button onclick="finishMission()" style="background:white; color:var(--primary); border:none; padding:5px 10px; border-radius:5px; font-weight:900;">TERMINER</button>
     </div>
-
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-        <img id="peer-img" src="" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--primary); object-fit:cover;">
-        <div>
-            <h3 id="peer-name">Contact</h3>
-            <span style="font-size:0.7rem; color:#4CAF50;">● En ligne</span>
-        </div>
-        <i class="fa fa-phone" style="margin-left:auto; color:var(--primary); font-size:1.4rem;" onclick="alert('Appel vocal...')"></i>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <img id="peerImg" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+        <h3 id="peerName">Contact</h3>
+        <i class="fa fa-phone" style="margin-left:auto; color:var(--primary);" onclick="alert('Appel direct...')"></i>
     </div>
-
-    <div id="chat-box" style="height:50vh; overflow-y:auto; padding-bottom:20px;">
-        <button id="cmd-btn" class="btn-primary" onclick="requestMission()">LANCER UNE MISSION</button>
-    </div>
-
+    <div id="chatMessages" style="height:55vh; overflow-y:auto;"></div>
+    
     <div class="chat-footer">
-        <i class="fa fa-image" onclick="document.getElementById('gallery-input').click()"></i>
-        <input type="text" id="chat-input" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
-        <i class="fa fa-microphone" onclick="alert('Enregistrement note vocale...')"></i>
-        <i class="fa fa-paper-plane" style="color:var(--primary);" onclick="sendMsg()"></i>
+        <i class="fa fa-camera" onclick="document.getElementById('fileInput').click()"></i>
+        <input type="text" id="msgInp" class="input-field" placeholder="Message..." style="margin:0; flex:1;">
+        <i class="fa fa-microphone"></i>
+        <i class="fa fa-paper-plane" style="color:var(--primary);" onclick="send()"></i>
     </div>
 </div>
 
 <div id="profile" class="page">
-    <h2 style="margin-bottom:30px;">Mon Compte</h2>
-    <div style="text-align:center; margin-bottom:30px;">
-        <img id="my-profile-img" src="" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
-        <h3 id="my-profile-name" style="margin-top:10px;">Nom</h3>
-    </div>
-    <button class="btn-outline" style="margin-bottom:15px;" onclick="alert('Fonction de modification bientôt disponible')">Modifier le profil</button>
-    <button class="btn-outline" style="color: #ff4444; border-color: #ff4444;" onclick="deleteMyAccount()">Supprimer mon compte</button>
+    <h2 style="margin-bottom:20px;">Mon Compte</h2>
+    <div id="myData" style="text-align:center; margin-bottom:30px;"></div>
+    <button class="btn-outline" onclick="alert('Modification bientôt disponible')">Modifier mes infos</button>
+    <button class="btn-red" style="background:#444;" onclick="logout()">Se déconnecter</button>
+    <button class="btn-red" style="margin-top:50px; opacity:0.5;" onclick="deleteAcc()">Supprimer mon compte</button>
 </div>
 
-<div class="nav-bar" id="app-nav" style="display:none;">
-    <div class="nav-item active" onclick="showPage('explore')"><i class="fa fa-search"></i></div>
-    <div class="nav-item" onclick="showPage('chat-ui')"><i class="fa fa-comment"></i></div>
-    <div class="nav-item" onclick="showPage('profile')"><i class="fa fa-user"></i></div>
+<div id="nav" class="nav-bottom" style="display:none;">
+    <i class="fa fa-search" onclick="showPage('explore')"></i>
+    <i class="fa fa-comment" onclick="showPage('chat')"></i>
+    <i class="fa fa-user" onclick="showPage('profile')"></i>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k",
@@ -151,96 +129,114 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let myRole = '';
-    let myPhoto = '';
+    let authMode = 'signup';
+    let selectedRole = 'client';
+    let profileImg = '';
 
-    // Photo de profil depuis galerie
-    document.getElementById('gallery-input').onchange = (e) => {
-        const file = e.target.files[0];
+    window.openAuth = (mode) => {
+        authMode = mode;
+        document.getElementById('auth-title').innerText = mode === 'signup' ? "Inscription" : "Connexion";
+        document.getElementById('signup-only').style.display = mode === 'signup' ? 'block' : 'none';
+        showPage('auth-page');
+    };
+
+    window.setRole = (r) => { selectedRole = r; alert("Rôle sélectionné : " + r); };
+
+    document.getElementById('fileInput').onchange = (e) => {
         const reader = new FileReader();
-        reader.onloadend = () => {
-            myPhoto = reader.result;
-            document.getElementById('img-preview').src = reader.result;
-            document.getElementById('img-preview').style.display = 'block';
-            document.getElementById('icon-cam').style.display = 'none';
-        };
-        reader.readAsDataURL(file);
+        reader.onload = () => { profileImg = reader.result; document.getElementById('imgPrev').src = profileImg; document.getElementById('imgPrev').style.display='block'; };
+        reader.readAsDataURL(e.target.files[0]);
     };
 
-    window.showReg = (role) => {
-        myRole = role;
-        document.getElementById('f-only').style.display = role === 'freelance' ? 'block' : 'none';
-        showPage('signup');
-    };
-
-    window.handleSignup = async () => {
-        const email = document.getElementById('reg-email').value;
-        const pass = document.getElementById('reg-pass').value;
-        const name = document.getElementById('reg-name').value;
-        const phone = document.getElementById('reg-mpesa').value;
-
-        if(!email || !pass || !myPhoto) return alert("Photo, Email et Mot de passe requis !");
+    window.handleAuth = async () => {
+        const email = document.getElementById('authEmail').value;
+        const pass = document.getElementById('authPass').value;
 
         try {
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "users", res.user.uid), {
-                uid: res.user.uid,
-                name, email, phone, role: myRole, photo: myPhoto
-            });
-            
-            document.getElementById('my-profile-img').src = myPhoto;
-            document.getElementById('my-profile-name').innerText = name;
-            document.getElementById('peer-img').src = myPhoto;
-            document.getElementById('app-nav').style.display = 'flex';
-            showPage('explore');
-        } catch (e) { alert(e.message); }
+            if(authMode === 'signup') {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), {
+                    name: document.getElementById('regName').value,
+                    role: selectedRole,
+                    phone: document.getElementById('regMpesa').value,
+                    photo: profileImg
+                });
+            } else {
+                await signInWithEmailAndPassword(auth, email, pass);
+            }
+            loginSuccess();
+        } catch (e) { alert("Erreur : " + e.message); }
     };
 
-    window.sendMsg = () => {
-        const msg = document.getElementById('chat-input').value;
-        // Sécurité anti-fraude : interdiction de demander/donner des numéros
-        if(msg.match(/[0-9]{8,}/) || msg.toLowerCase().includes("numéro")) {
-            return alert("SÉCURITÉ KIN MUSALA : Interdiction d'échanger des numéros ou contacts personnels. Utilisez le système de paiement officiel à la fin.");
-        }
-        if(!msg) return;
-        document.getElementById('chat-box').innerHTML += `<div style="text-align:right; margin:10px;"><span style="background:var(--primary); padding:10px 15px; border-radius:15px 15px 0 15px; display:inline-block;">${msg}</span></div>`;
-        document.getElementById('chat-input').value = "";
+    async function loginSuccess() {
+        document.getElementById('nav').style.display = 'flex';
+        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+        const userData = userDoc.data();
+        
+        document.getElementById('myData').innerHTML = `
+            <img src="${userData.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+            <h3>${userData.name}</h3>
+            <p>${userData.role} | ${userData.phone}</p>
+        `;
+        showPage('explore');
+        loadUsers(userData.role);
+    }
+
+    async function loadUsers(myRole) {
+        const snap = await getDocs(collection(db, "users"));
+        const list = document.getElementById('userList');
+        list.innerHTML = '';
+        snap.forEach(d => {
+            const u = d.data();
+            // Freelance ne voit QUE les clients, Client ne voit QUE les freelances
+            if(u.role !== myRole) {
+                list.innerHTML += `
+                <div onclick="startChat('${u.name}', '${u.photo}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-bottom:10px;">
+                    <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                    <div><b>${u.name}</b><br><small>${u.role}</small></div>
+                </div>`;
+            }
+        });
+    }
+
+    window.send = () => {
+        const m = document.getElementById('msgInp').value;
+        // SÉCURITÉ ANTI-MORT : BLOQUAGE NUMÉROS
+        if(m.match(/[0-9]{8,}/)) return alert("SÉCURITÉ : Interdiction d'envoyer des numéros personnels !");
+        if(!m) return;
+        document.getElementById('chatMessages').innerHTML += `<p style="text-align:right; margin:10px;"><span style="background:var(--primary); padding:8px 15px; border-radius:15px;">${m}</span></p>`;
+        document.getElementById('msgInp').value = "";
+    };
+
+    window.startChat = (name, photo) => {
+        document.getElementById('peerName').innerText = name;
+        document.getElementById('peerImg').src = photo;
+        document.getElementById('chatMessages').innerHTML = `<button class="btn-red" onclick="requestMission()">LANCER LA MISSION</button>`;
+        showPage('chat');
     };
 
     window.requestMission = () => {
-        const box = document.getElementById('chat-box');
-        box.innerHTML += `<div style="background:var(--surface); padding:15px; border-radius:10px; margin:10px 0;"><b>MISSION ENVOYÉE</b><br>En attente d'acceptation par le talent...</div>`;
-        setTimeout(() => {
-            box.innerHTML += `<div style="background:#4CAF50; padding:15px; border-radius:10px; margin:10px 0;"><b>MISSION ACCEPTÉE !</b><br>La barre de tâche est active.</div>`;
-            document.getElementById('task-bar').style.display = 'flex';
-            document.getElementById('cmd-btn').style.display = 'none';
-        }, 2000);
+        document.getElementById('missionActive').style.display = 'flex';
+        alert("Mission acceptée par le freelance !");
     };
 
-    window.confirmEndTask = () => {
-        alert("TRAVAIL TERMINÉ !\n\nClient : Veuillez envoyer le paiement au numéro sécurisé de KIN MUSALA :\n📞 0813339164\n\nLe talent sera payé dès confirmation.");
-        document.getElementById('task-bar').style.display = 'none';
+    window.finishMission = () => {
+        alert("TRAVAIL TERMINÉ ✅\n\nClient : Veuillez envoyer l'argent au numéro central KIN MUSALA :\n📞 0813339164\n\nLe paiement sera débloqué après confirmation.");
+        document.getElementById('missionActive').style.display = 'none';
     };
 
-    window.deleteMyAccount = async () => {
-        if(confirm("Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible.")) {
-            try {
-                const user = auth.currentUser;
-                await deleteDoc(doc(db, "users", user.uid));
-                await deleteUser(user);
-                window.location.reload();
-            } catch (e) { alert("Veuillez vous reconnecter pour effectuer cette action."); }
+    window.logout = () => signOut(auth).then(() => window.location.reload());
+
+    window.deleteAcc = async () => {
+        if(confirm("Action irréversible : Supprimer votre compte ?")) {
+            await deleteUser(auth.currentUser);
+            window.location.reload();
         }
     };
 
     window.showPage = (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    };
-
-    window.filterUsers = () => {
-        // Logique de recherche intelligente
     };
 </script>
 </body>
