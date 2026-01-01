@@ -9,110 +9,128 @@
     <style>
         :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
         
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
         .page.active { display: block; }
 
-        /* Bouton Caméra (Cercle noir pointillé rouge) */
-        .photo-picker {
+        /* Photo Design Pointillé */
+        .photo-picker-main {
             width: 140px; height: 140px; border-radius: 50%;
             border: 3px dashed var(--primary); background: #000;
             margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; position: relative; overflow: hidden;
         }
-        .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
-        .photo-picker i { font-size: 2.5rem; color: var(--primary); }
+        .photo-picker-main img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .photo-picker-main i { font-size: 2.5rem; color: var(--primary); }
 
         .btn-red { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 15px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .input-field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
+        .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
 
-        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        /* Modal Profil */
+        #profileModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-content { background: var(--surface); width: 85%; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--primary); }
+
+        /* Navigation */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: #555; font-size: 1.4rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+
+        /* Status Mission */
         .mission-header { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; }
+        .chat-footer { position: fixed; bottom: 75px; left: 0; width: 100%; padding: 15px; background: var(--bg); display: flex; align-items: center; gap: 15px; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
     <div style="text-align: center; margin-top: 15vh;">
-        <h1 style="font-size: 3.5rem; font-weight: 900;">KIN<br>MUSALA</h1>
-        <button class="btn-red" style="margin-top:40px;" onclick="showPage('auth')">Commencer</button>
+        <h1 style="font-size: 3.5rem; font-weight: 900; line-height: 1;">KIN<br>MUSALA</h1>
+        <p style="margin: 20px 0 45px; opacity: 0.7;">Networking Elite de Kinshasa</p>
+        <button class="btn-red" onclick="navTo('auth-page', 'signup')">S'inscrire</button>
+        <button class="btn-outline" onclick="navTo('auth-page', 'login')">Se connecter</button>
     </div>
 </div>
 
-<div id="auth" class="page">
-    <div class="photo-picker" onclick="document.getElementById('fileInp').click()">
-        <i class="fa fa-camera" id="camIcon"></i>
-        <img id="imgPrev" style="display:none;">
+<div id="auth-page" class="page">
+    <h2 id="auth-title" style="text-align:center; margin-bottom:20px;">Inscription</h2>
+    <div id="reg-fields">
+        <div class="photo-picker-main" onclick="document.getElementById('fileInp').click()">
+            <i class="fa fa-camera" id="camIco"></i>
+            <img id="imgPreview" style="display:none;">
+        </div>
+        <input type="file" id="fileInp" hidden accept="image/*">
+        <input type="text" id="nameInp" placeholder="Nom Complet" class="field">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <button id="btnClient" class="btn-outline" style="flex:1;" onclick="chooseRole('client')">Client</button>
+            <button id="btnFree" class="btn-outline" style="flex:1;" onclick="chooseRole('freelance')">Freelance</button>
+        </div>
+        <input type="text" id="phoneInp" placeholder="Numéro de paiement (M-Pesa...)" class="field">
+        <input type="text" id="jobInp" placeholder="Métier (si freelance)" class="field">
     </div>
-    <input type="file" id="fileInp" hidden accept="image/*">
-    
-    <input type="text" id="name" placeholder="Nom Complet" class="input-field">
-    <input type="email" id="email" placeholder="Email" class="input-field">
-    <input type="password" id="pass" placeholder="Mot de passe" class="input-field">
-    <input type="text" id="phone" placeholder="Numéro M-Pesa" class="input-field">
-    
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button id="roleC" class="btn-outline" style="flex:1" onclick="selectRole('client')">Client</button>
-        <button id="roleF" class="btn-outline" style="flex:1" onclick="selectRole('freelance')">Freelance</button>
-    </div>
-    <button class="btn-red" onclick="handleSignup()">S'inscrire</button>
-    <button class="btn-outline" style="border:none" onclick="handleLogin()">Se connecter</button>
+    <input type="email" id="emailInp" placeholder="Email" class="field">
+    <input type="password" id="passInp" placeholder="Mot de passe" class="field">
+    <button class="btn-red" onclick="submitAuth()">Confirmer</button>
 </div>
 
 <div id="explore" class="page">
-    <div class="input-field"><i class="fa fa-search"></i> <input type="text" id="search" placeholder="Rechercher..." style="background:transparent; border:none; color:white; margin-left:10px;" onkeyup="filter()"></div>
-    <div id="userList"></div>
+    <div class="field" style="display:flex; align-items:center;">
+        <i class="fa fa-search"></i>
+        <input type="text" id="smartSearch" placeholder="Recherche intelligente..." style="background:transparent; border:none; color:white; margin-left:10px; width:100%;" onkeyup="searchEngine()">
+    </div>
+    <div id="userDisplay"></div>
 </div>
 
 <div id="chat" class="page">
-    <div id="taskBar" style="display:none;" class="mission-header">
-        <span>⚡ MISSION ACTIVE</span>
-        <button id="finishBtn" onclick="finishTask()" style="background:white; color:var(--primary); border:none; padding:5px 10px; border-radius:5px; font-weight:900; display:none;">TERMINER</button>
+    <div id="activeTask" style="display:none;" class="mission-header">
+        <span>⚡ TÂCHE EN COURS</span>
+        <button id="finishBtn" onclick="endMission()" style="background:white; color:var(--primary); border:none; padding:5px 12px; border-radius:8px; font-weight:900; display:none;">TERMINER</button>
     </div>
-    
-    <div id="peerInfo" style="display:flex; align-items:center; gap:15px; margin-bottom:20px; border-bottom:1px solid var(--surface); padding-bottom:10px;">
-        <img id="pImg" src="" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-        <div><b id="pName"></b><br><small id="pRole"></small></div>
-        <div style="margin-left:auto;"><i class="fa fa-phone"></i></div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px; border-bottom:1px solid var(--surface); padding-bottom:10px;">
+        <img id="chatPeerImg" src="" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
+        <h3 id="chatPeerName">Contact</h3>
+        <div style="margin-left:auto; display:flex; gap:15px;">
+            <i class="fa fa-phone" onclick="alert('Appel vocal...')"></i>
+            <i class="fa fa-video" onclick="alert('Appel vidéo...')"></i>
+        </div>
     </div>
-
-    <div id="chatBox" style="height:50vh; overflow-y:auto;"></div>
-
-    <div id="clientActions" style="display:none; margin-top:10px;">
-        <button class="btn-red" onclick="requestMission()">LANCER LA MISSION</button>
-    </div>
-
-    <div id="freelanceActions" style="display:none; margin-top:10px; gap:10px;">
-        <button class="btn-red" style="background:#4CAF50; flex:1;" onclick="acceptMission()">ACCEPTER</button>
-        <button class="btn-red" style="background:#333; flex:1;" onclick="refuseMission()">REFUSER</button>
-    </div>
-
-    <div style="position:fixed; bottom:70px; width:90%; display:flex; gap:10px;">
-        <input type="text" id="msg" class="input-field" placeholder="Message..." style="margin:0;">
-        <button onclick="sendMsg()" class="btn-red" style="width:50px; padding:0;"><i class="fa fa-paper-plane"></i></button>
+    <div id="chatFlow" style="height:55vh; overflow-y:auto;"></div>
+    <div class="chat-footer">
+        <i class="fa fa-image"></i><i class="fa fa-microphone"></i>
+        <input type="text" id="msgContent" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white;">
+        <i class="fa fa-paper-plane" onclick="pushMsg()"></i>
     </div>
 </div>
 
-<div id="profile" class="page">
-    <div id="myCard" style="text-align:center; margin-bottom:30px;"></div>
-    <div id="myMissions">
-        <h4 style="margin-bottom:10px;">Services en cours :</h4>
-        <div id="missionList" style="background:var(--surface); padding:15px; border-radius:15px; font-size:0.8rem;">Aucune mission.</div>
-    </div>
-    <button class="btn-outline" style="margin-top:20px; color:#ff4444;" onclick="deleteAcc()">Supprimer mon compte</button>
+<div id="account" class="page">
+    <h2>Mon Profil</h2>
+    <div id="myCard" style="text-align:center; padding:20px; border-radius:20px; background:var(--surface); margin:20px 0;"></div>
+    <h3>Missions en cours :</h3>
+    <div id="myMissions" style="margin-top:10px; opacity:0.7;">Aucune mission.</div>
+    <button class="btn-red" style="margin-top:30px; background:#333;" onclick="window.location.reload()">Se déconnecter</button>
+    <button class="btn-red" style="margin-top:10px; opacity:0.5;" onclick="alert('Compte supprimé')">Supprimer mon compte</button>
 </div>
 
-<div class="nav-bottom" id="navbar" style="display:none;">
-    <i class="fa fa-search" onclick="showPage('explore')"></i>
-    <i class="fa fa-comment" onclick="showPage('chat')"></i>
-    <i class="fa fa-user" onclick="showPage('profile')"></i>
+<div id="profileModal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <img id="modalImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+        <h2 id="modalName" style="margin:15px 0 5px;"></h2>
+        <p id="modalRole" style="color:var(--primary); font-weight:800;"></p>
+        <p id="modalJob" style="opacity:0.6; margin-bottom:15px;"></p>
+        <button class="btn-red" onclick="document.getElementById('profileModal').style.display='none'; switchPage('chat')">Envoyer un message</button>
+    </div>
+</div>
+
+<div id="navigation" class="nav-bottom" style="display:none;">
+    <i class="fa fa-search" onclick="switchTab('explore')"></i>
+    <i class="fa fa-comment" onclick="switchTab('chat')"></i>
+    <i class="fa fa-user" onclick="switchTab('account')"></i>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -129,96 +147,114 @@
     const db = getFirestore(app);
 
     let myData = null;
-    let selRole = 'client';
-    let base64Img = "";
-
-    window.selectRole = (r) => { selRole = r; document.getElementById('roleC').style.borderColor = r==='client'?'#FF4B3A':'#333'; document.getElementById('roleF').style.borderColor = r==='freelance'?'#FF4B3A':'#333'; };
+    let selectedUser = null;
+    let myPhoto = '';
 
     document.getElementById('fileInp').onchange = (e) => {
         const reader = new FileReader();
-        reader.onload = () => { base64Img = reader.result; document.getElementById('imgPrev').src = base64Img; document.getElementById('imgPrev').style.display='block'; };
+        reader.onload = () => { myPhoto = reader.result; document.getElementById('imgPreview').src = myPhoto; document.getElementById('imgPreview').style.display = 'block'; };
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    window.handleSignup = async () => {
-        try {
-            const res = await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
-            const userObj = { name: document.getElementById('name').value, role: selRole, phone: document.getElementById('phone').value, photo: base64Img };
-            await setDoc(doc(db, "users", res.user.uid), userObj);
-            location.reload();
-        } catch(e) { alert(e.message); }
+    window.chooseRole = (r) => { 
+        myData = { role: r }; 
+        document.getElementById('btnClient').style.borderColor = r==='client'?'#FF4B3A':'#333';
+        document.getElementById('btnFree').style.borderColor = r==='freelance'?'#FF4B3A':'#333';
     };
 
-    window.handleLogin = async () => {
+    window.submitAuth = async () => {
+        const email = document.getElementById('emailInp').value;
+        const pass = document.getElementById('passInp').value;
         try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
-            const snap = await getDoc(doc(db, "users", auth.currentUser.uid));
-            myData = snap.data();
-            document.getElementById('navbar').style.display = 'flex';
-            document.getElementById('myCard').innerHTML = `<img src="${myData.photo}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary);"><br><h2>${myData.name}</h2><p>${myData.role}</p>`;
-            showPage('explore');
-            loadExplore();
-        } catch(e) { alert(e.message); }
+            if(document.getElementById('auth-title').innerText === "Inscription") {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                const info = { name: document.getElementById('nameInp').value, role: myData.role, phone: document.getElementById('phoneInp').value, job: document.getElementById('jobInp').value, photo: myPhoto, uid: res.user.uid };
+                await setDoc(doc(db, "users", res.user.uid), info);
+            } else {
+                await signInWithEmailAndPassword(auth, email, pass);
+            }
+            loadProfile();
+        } catch (e) { alert(e.message); }
     };
 
-    async function loadExplore() {
+    async function loadProfile() {
+        const snap = await getDoc(doc(db, "users", auth.currentUser.uid));
+        myData = snap.data();
+        document.getElementById('myCard').innerHTML = `<img src="${myData.photo}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;"><br><b>${myData.name}</b><br><small>${myData.role}</small>`;
+        document.getElementById('navigation').style.display = 'flex';
+        switchPage('explore');
+        loadUsers();
+    }
+
+    async function loadUsers() {
         const snap = await getDocs(collection(db, "users"));
-        const list = document.getElementById('userList');
-        list.innerHTML = "";
+        const cont = document.getElementById('userDisplay');
+        cont.innerHTML = '';
         snap.forEach(d => {
             const u = d.data();
             if(u.role !== myData.role) {
-                list.innerHTML += `<div onclick="openChat('${u.name}','${u.role}','${u.photo}','${u.phone}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-bottom:10px;">
-                    <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-                    <div><b>${u.name}</b><br><small>${u.role}</small></div>
+                cont.innerHTML += `<div onclick="openProfile('${u.uid}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-bottom:10px;">
+                    <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+                    <div><b>${u.name}</b><br><small>${u.job || 'Client'}</small></div>
                 </div>`;
             }
         });
     }
 
-    window.openChat = (n, r, p, ph) => {
-        document.getElementById('pName').innerText = n;
-        document.getElementById('pRole').innerText = r;
-        document.getElementById('pImg').src = p;
-        document.getElementById('chatBox').innerHTML = `<div style="text-align:center; opacity:0.5; padding:20px;">Contact : ${ph}</div>`;
+    window.openProfile = async (uid) => {
+        const snap = await getDoc(doc(db, "users", uid));
+        selectedUser = snap.data();
+        document.getElementById('modalImg').src = selectedUser.photo;
+        document.getElementById('modalName').innerText = selectedUser.name;
+        document.getElementById('modalRole').innerText = selectedUser.role.toUpperCase();
+        document.getElementById('modalJob').innerText = selectedUser.job || "Cherche un expert";
+        document.getElementById('profileModal').style.display = 'flex';
         
-        // PRIVILÈGE : Seul le client voit le bouton "Lancer"
-        document.getElementById('clientActions').style.display = myData.role === 'client' ? 'block' : 'none';
-        showPage('chat');
+        document.getElementById('chatPeerImg').src = selectedUser.photo;
+        document.getElementById('chatPeerName').innerText = selectedUser.name;
+        document.getElementById('chatFlow').innerHTML = myData.role === 'client' ? `<button class="btn-red" onclick="sendOrder()">LANCER LA MISSION</button>` : `<p style="opacity:0.5; text-align:center;">En attente d'une commande...</p>`;
     };
 
-    window.requestMission = () => {
-        document.getElementById('chatBox').innerHTML += `<div style="background:var(--surface); padding:10px; border-radius:10px; margin:10px;"><b>SYSTEM :</b> Mission envoyée. En attente du freelance...</div>`;
-        // Simulation pour ton test : le bouton freelance apparaît après 1s
+    window.sendOrder = () => {
+        document.getElementById('chatFlow').innerHTML += `<div style="background:var(--surface); padding:15px; border-radius:10px; margin-top:10px;">
+            <b>MISSION ENVOYÉE</b><br>En attente que le freelance accepte...
+        </div>`;
+        // Simulation pour le freelance (dans un vrai projet, ceci passe par Firebase)
         setTimeout(() => {
-            if(myData.role === 'freelance') document.getElementById('freelanceActions').style.display = 'flex';
-            else document.getElementById('chatBox').innerHTML += `<div style="color:var(--primary); margin:10px;">Le freelance a reçu la demande.</div>`;
-        }, 1000);
+            document.getElementById('chatFlow').innerHTML += `<div style="background:var(--surface); border:1px solid var(--primary); padding:15px; border-radius:10px; margin-top:10px;">
+                <b>NOUVELLE MISSION !</b><br>Acceptez-vous ce travail ?<br><br>
+                <button onclick="acceptMission()" style="background:#4CAF50; color:white; border:none; padding:8px; border-radius:5px; margin-right:10px;">ACCEPTER</button>
+                <button onclick="alert('Mission refusée')" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;">REFUSER</button>
+            </div>`;
+        }, 1500);
     };
 
     window.acceptMission = () => {
-        document.getElementById('freelanceActions').style.display = 'none';
-        document.getElementById('taskBar').style.display = 'flex';
-        // Seul le client voit le bouton "Terminer"
+        document.getElementById('activeTask').style.display = 'flex';
         if(myData.role === 'client') document.getElementById('finishBtn').style.display = 'block';
-        document.getElementById('chatBox').innerHTML += `<div style="background:#4CAF50; padding:10px; border-radius:10px; margin:10px;">Mission Acceptée ! Travail en cours.</div>`;
-        document.getElementById('missionList').innerText = "Mission active avec " + document.getElementById('pName').innerText;
+        document.getElementById('myMissions').innerText = "Mission avec " + selectedUser.name;
+        alert("Mission activée !");
     };
 
-    window.finishTask = () => {
-        alert("FIN DE MISSION. Payez au 0813339164.");
-        document.getElementById('taskBar').style.display = 'none';
-        document.getElementById('missionList').innerText = "Aucune mission.";
+    window.endMission = () => {
+        alert("FÉLICITATIONS ! Travail terminé.\n\nPAIEMENT : Envoyez l'argent au numéro :\n📞 0813339164\n\n(Paiement centralisé KIN MUSALA)");
+        document.getElementById('activeTask').style.display = 'none';
+        document.getElementById('myMissions').innerText = "Aucune mission.";
     };
 
-    window.sendMsg = () => {
-        const m = document.getElementById('msg').value;
-        if(m.match(/[0-9]{8,}/)) return alert("STOP ! Interdiction d'envoyer des numéros.");
-        document.getElementById('chatBox').innerHTML += `<p style="text-align:right; margin:5px;">${m}</p>`;
-        document.getElementById('msg').value = "";
+    window.pushMsg = () => {
+        const val = document.getElementById('msgContent').value;
+        if(val.match(/[0-9]{8,}/)) return alert("SÉCURITÉ : Interdiction d'échanger des numéros personnels !");
+        document.getElementById('chatFlow').innerHTML += `<p style="text-align:right; margin:10px;"><span style="background:var(--primary); padding:10px; border-radius:10px;">${val}</span></p>`;
+        document.getElementById('msgContent').value = '';
     };
 
-    window.showPage = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
+    window.switchPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
+    window.switchTab = (id) => switchPage(id);
+    window.navTo = (p, m) => { if(m) document.getElementById('auth-title').innerText = m==='signup'?"Inscription":"Connexion"; switchPage(p); };
 </script>
 </body>
 </html>
