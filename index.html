@@ -3,89 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KIN MUSALA | Elite Networking</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>KIN MUSALA | Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #FF4B3A; --bg-gradient: linear-gradient(180deg, #1A1C29 0%, #0D0E14 100%); --surface: #212330; --text: #FFFFFF; }
+        :root { 
+            --primary: #FF4B3A; 
+            --bg-start: #1A1C29; 
+            --bg-end: #0D0E14;   
+            --surface: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #FFFFFF;
+        }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-gradient); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body { 
+            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); 
+            color: var(--text); 
+            min-height: 100vh;
+        }
         
-        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .page { display: none; padding: 20px 5% 100px; max-width: 500px; margin: 0 auto; }
         .page.active { display: block; }
-        
-        /* Formulaire & Inputs */
-        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white; margin-bottom:15px; }
-        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
-        
-        /* Photo Upload Button */
-        .photo-upload { width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 2px dashed var(--primary); position: relative; overflow: hidden; }
-        .photo-upload img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-upload i { font-size: 1.5rem; color: var(--primary); }
 
-        /* Chat & Mission UI */
-        .mission-bar { background: var(--primary); padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-        .chat-input-area { position: fixed; bottom: 0; width: 100%; background: #0D0E14; padding: 15px; display: flex; align-items: center; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .chat-icons i { font-size: 1.2rem; color: var(--text); opacity: 0.7; margin: 0 5px; cursor: pointer; }
+        /* Bouton Caméra exact selon ta photo */
+        .photo-picker {
+            width: 140px; height: 140px; border-radius: 50%;
+            background: #000; border: 3px dashed var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 30px; cursor: pointer; position: relative;
+        }
+        .photo-picker i { font-size: 3rem; color: var(--primary); }
+        .photo-picker img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; position: absolute; }
+
+        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
+        .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:18px; font-weight:700; width:100%; cursor:pointer; }
+        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; }
+
+        /* Barre de mission et Chat */
+        .mission-header { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; margin-bottom: 10px; }
+        .chat-footer { position: fixed; bottom: 0; width: 100%; max-width: 500px; padding: 15px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
+        .chat-footer i { font-size: 1.3rem; color: var(--text); cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align: center; padding-top: 15vh;">
-        <h1 style="font-size: 3.5rem; font-weight: 900; line-height: 1;">KIN<br>MUSALA.</h1>
+    <div style="text-align: center; padding-top: 10vh;">
+        <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;">KIN<br>MUSALA.</h1>
         <p style="opacity: 0.7; margin: 20px 0 40px;">L'élite des talents de Kinshasa.</p>
-        <button class="btn-primary" onclick="startReg('client')">Trouver un Expert</button>
-        <button style="background:transparent; color:white; border:none; margin-top:20px; font-weight:700;" onclick="startReg('freelance')">Devenir Freelance</button>
+        <button class="btn-primary" onclick="startReg('client')" style="margin-bottom:15px;">Trouver un Expert</button>
+        <button class="btn-outline" onclick="startReg('freelance')">Devenir Freelance</button>
     </div>
 </div>
 
 <div id="signup" class="page">
-    <h2 style="text-align:center; margin-bottom:20px;">Inscription</h2>
-    <div class="photo-upload" onclick="document.getElementById('fileInput').click()">
-        <i class="fa fa-camera" id="cam-icon"></i>
-        <img id="preview" src="" class="hidden">
+    <div class="photo-picker" onclick="document.getElementById('gallery-input').click()">
+        <i class="fa fa-camera" id="icon-cam"></i>
+        <img id="img-preview" style="display:none;">
     </div>
-    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="previewImage(this)">
+    <input type="file" id="gallery-input" style="display:none;" accept="image/*">
     
     <input type="text" id="reg-name" placeholder="Nom complet" class="field">
-    <input type="email" id="reg-email" placeholder="Email" class="field">
-    <input type="text" id="reg-payment" placeholder="Numéro M-Pesa / Orange Money" class="field">
+    <input type="text" id="reg-mpesa" placeholder="Numéro M-Pesa / Airtel (Paiement)" class="field">
     
-    <div id="freelance-fields" class="hidden">
-        <input type="text" id="reg-domain" placeholder="Votre métier" class="field">
+    <div id="f-only" style="display:none;">
+        <input type="text" id="reg-job" placeholder="Métier" class="field">
+        <input type="number" id="reg-exp" placeholder="Années d'expérience" class="field">
     </div>
-    
-    <button class="btn-primary" id="btn-save">Valider</button>
+    <button class="btn-primary" onclick="finishReg()">S'inscrire</button>
 </div>
 
-<div id="chat" class="page">
-    <div id="chat-header" style="display:flex; align-items:center; gap:10px; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1);">
-        <img id="chat-pfp" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-        <div id="chat-name" style="font-weight:700;">Talent</div>
-        <div style="margin-left:auto;" class="chat-icons">
-            <i class="fa fa-phone"></i>
-            <i class="fa fa-video"></i>
-        </div>
+<div id="chat-ui" class="page">
+    <div id="task-bar" style="display:none;" class="mission-header">
+        <span>TÂCHE EN COURS...</span>
+        <button onclick="endMission()" style="background:white; color:var(--primary); border:none; padding:5px 12px; border-radius:5px; font-weight:900;">TERMINER</button>
     </div>
 
-    <div id="mission-status" class="hidden" style="margin-top:15px;">
-        <div class="mission-bar">
-            <span>🚀 Tâche en cours...</span>
-            <button onclick="finishTask()" style="background:white; color:black; border:none; padding:5px 10px; border-radius:5px; font-weight:800;">TERMINER</button>
-        </div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <img id="peer-img" src="" style="width:45px; height:45px; border-radius:50%; border:2px solid var(--primary);">
+        <h3 id="peer-name">Contact</h3>
+        <i class="fa fa-phone" style="margin-left:auto; color:var(--primary);" onclick="alert('Appel...')"></i>
     </div>
 
-    <div id="messages-list" style="height:60vh; overflow-y:auto; padding:20px 0;">
-        </div>
+    <div id="chat-box" style="height:55vh; overflow-y:auto;">
+        <button id="cmd-btn" class="btn-primary" onclick="orderMission()" style="margin-bottom:20px;">COMMANDER CE SERVICE</button>
+    </div>
 
-    <div class="chat-input-area">
-        <div class="chat-icons">
-            <i class="fa fa-plus"></i>
-            <i class="fa fa-microphone"></i>
-        </div>
-        <input type="text" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
-        <i class="fa fa-paper-plane" style="color:var(--primary);"></i>
+    <div class="chat-footer">
+        <i class="fa fa-plus-circle"></i>
+        <input type="text" id="chat-input" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
+        <i class="fa fa-microphone"></i>
+        <i class="fa fa-paper-plane" style="color:var(--primary);" onclick="sendMsg()"></i>
     </div>
 </div>
 
@@ -104,42 +112,66 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    let myRole = '';
+    let myPhoto = '';
 
-    let profilePic = "";
-
-    window.previewImage = (input) => {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('preview').src = e.target.result;
-                document.getElementById('preview').classList.remove('hidden');
-                document.getElementById('cam-icon').classList.add('hidden');
-                profilePic = e.target.result; // Version base64 pour le test
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
+    // Galerie photo
+    document.getElementById('gallery-input').onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            myPhoto = reader.result;
+            document.getElementById('img-preview').src = reader.result;
+            document.getElementById('img-preview').style.display = 'block';
+            document.getElementById('icon-cam').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
     };
 
     window.startReg = (role) => {
-        document.getElementById('freelance-fields').classList.toggle('hidden', role !== 'freelance');
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        myRole = role;
+        document.getElementById('f-only').style.display = role === 'freelance' ? 'block' : 'none';
+        document.getElementById('hero').classList.remove('active');
         document.getElementById('signup').classList.add('active');
     };
 
-    window.finishTask = () => {
-        alert("Mission terminée ! Veuillez envoyer le paiement au 0813339164. Toute tentative d'échange de numéro personnel est interdite.");
+    window.finishReg = async () => {
+        const name = document.getElementById('reg-name').value;
+        if(!myPhoto || !name) return alert("Photo et Nom obligatoires");
+        
+        await addDoc(collection(db, "users"), { name, role: myRole, photo: myPhoto });
+        
+        document.getElementById('signup').classList.remove('active');
+        document.getElementById('chat-ui').classList.add('active');
+        document.getElementById('peer-img').src = myPhoto;
+        if(myRole === 'freelance') document.getElementById('cmd-btn').style.display = 'none';
     };
 
-    document.getElementById('btn-save').onclick = async () => {
-        const name = document.getElementById('reg-name').value;
-        if(!name) return alert("Nom requis");
-        
-        // Simuler connexion directe au chat pour le test
-        document.getElementById('chat-pfp').src = profilePic || "https://ui-avatars.com/api/?name="+name;
-        document.getElementById('chat-name').innerText = name;
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('chat').classList.add('active');
-        document.getElementById('mission-status').classList.remove('hidden');
+    window.orderMission = () => {
+        const box = document.getElementById('chat-box');
+        box.innerHTML += `<div style="background:var(--surface); padding:15px; border-radius:10px; margin-top:10px;">
+            <b>MISSION ENVOYÉE</b><br>En attente d'acceptation par le freelance...
+        </div>`;
+        // Simulation acceptation
+        setTimeout(() => {
+            box.innerHTML += `<div style="background:var(--primary); padding:15px; border-radius:10px; margin-top:10px;">
+                <b>MISSION ACCEPTÉE !</b><br>Le travail commence.
+            </div>`;
+            document.getElementById('task-bar').style.display = 'flex';
+        }, 2000);
+    };
+
+    window.sendMsg = () => {
+        const msg = document.getElementById('chat-input').value;
+        if(msg.match(/[0-9]{8,}/)) return alert("SÉCURITÉ : Interdiction d'envoyer des numéros de téléphone !");
+        if(!msg) return;
+        document.getElementById('chat-box').innerHTML += `<p style="text-align:right; margin:10px;">${msg}</p>`;
+        document.getElementById('chat-input').value = "";
+    };
+
+    window.endMission = () => {
+        alert("FÉLICITATIONS ! Travail terminé.\n\nVeuillez envoyer le paiement au numéro sécurisé :\n📞 0813339164\n\n(Le freelance sera payé après validation)");
+        document.getElementById('task-bar').style.display = 'none';
     };
 </script>
 </body>
