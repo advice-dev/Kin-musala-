@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KIN MUSALA | Elite</title>
+    <title>KIN MUSALA | Elite Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,91 +15,99 @@
             --border: rgba(255, 255, 255, 0.1);
             --text: #FFFFFF;
         }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { 
-            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); 
-            color: var(--text); 
-            min-height: 100vh;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); color: var(--text); min-height: 100vh; }
         
         .page { display: none; padding: 20px 5% 100px; max-width: 500px; margin: 0 auto; }
         .page.active { display: block; }
 
-        /* Bouton Caméra exact selon ta photo */
+        /* Bouton Caméra exact selon ton design */
         .photo-picker {
-            width: 140px; height: 140px; border-radius: 50%;
+            width: 130px; height: 130px; border-radius: 50%;
             background: #000; border: 3px dashed var(--primary);
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 30px; cursor: pointer; position: relative;
+            margin: 0 auto 25px; cursor: pointer; position: relative; overflow: hidden;
         }
-        .photo-picker i { font-size: 3rem; color: var(--primary); }
-        .photo-picker img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; position: absolute; }
+        .photo-picker i { font-size: 2.5rem; color: var(--primary); }
+        .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
 
-        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
+        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; margin-top:10px; }
         .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:18px; font-weight:700; width:100%; cursor:pointer; }
-        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; }
+        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.4); border:1px solid var(--border); color:white; margin-bottom:12px; outline:none; }
 
-        /* Barre de mission et Chat */
-        .mission-header { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; margin-bottom: 10px; }
-        .chat-footer { position: fixed; bottom: 0; width: 100%; max-width: 500px; padding: 15px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
-        .chat-footer i { font-size: 1.3rem; color: var(--text); cursor: pointer; }
+        /* Chat UI */
+        .chat-header { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .mission-status { background: var(--primary); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; margin-bottom: 15px; }
+        .chat-box { height: 50vh; overflow-y: auto; padding-bottom: 20px; }
+        .chat-input-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align: center; padding-top: 10vh;">
+    <div style="text-align: center; padding-top: 12vh;">
         <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;">KIN<br>MUSALA.</h1>
-        <p style="opacity: 0.7; margin: 20px 0 40px;">L'élite des talents de Kinshasa.</p>
-        <button class="btn-primary" onclick="startReg('client')" style="margin-bottom:15px;">Trouver un Expert</button>
-        <button class="btn-outline" onclick="startReg('freelance')">Devenir Freelance</button>
+        <p style="opacity: 0.7; margin: 20px 0 45px;">Travaillez avec les meilleurs de Kinshasa.</p>
+        <button class="btn-primary" onclick="goToSignup('client')">Trouver un Expert</button>
+        <button class="btn-outline" onclick="goToSignup('freelance')" style="margin-top:15px;">Je suis un Talent</button>
     </div>
 </div>
 
 <div id="signup" class="page">
-    <div class="photo-picker" onclick="document.getElementById('gallery-input').click()">
-        <i class="fa fa-camera" id="icon-cam"></i>
-        <img id="img-preview" style="display:none;">
+    <h2 style="text-align:center; margin-bottom:20px;">Créer un profil</h2>
+    <div class="photo-picker" onclick="document.getElementById('file-input').click()">
+        <i class="fa fa-camera" id="cam-icon"></i>
+        <img id="preview" style="display:none;">
     </div>
-    <input type="file" id="gallery-input" style="display:none;" accept="image/*">
+    <input type="file" id="file-input" style="display:none;" accept="image/*">
     
     <input type="text" id="reg-name" placeholder="Nom complet" class="field">
-    <input type="text" id="reg-mpesa" placeholder="Numéro M-Pesa / Airtel (Paiement)" class="field">
+    <input type="email" id="reg-email" placeholder="Email (Obligatoire)" class="field">
+    <input type="password" id="reg-pass" placeholder="Mot de passe" class="field">
+    <input type="text" id="reg-mpesa" placeholder="Numéro M-Pesa / Airtel" class="field">
     
-    <div id="f-only" style="display:none;">
-        <input type="text" id="reg-job" placeholder="Métier" class="field">
+    <div id="freelance-only" style="display:none;">
+        <input type="text" id="reg-job" placeholder="Métier (ex: Peintre)" class="field">
         <input type="number" id="reg-exp" placeholder="Années d'expérience" class="field">
     </div>
-    <button class="btn-primary" onclick="finishReg()">S'inscrire</button>
+    <button class="btn-primary" onclick="handleAuth()">Valider l'inscription</button>
 </div>
 
-<div id="chat-ui" class="page">
-    <div id="task-bar" style="display:none;" class="mission-header">
-        <span>TÂCHE EN COURS...</span>
-        <button onclick="endMission()" style="background:white; color:var(--primary); border:none; padding:5px 12px; border-radius:5px; font-weight:900;">TERMINER</button>
+<div id="main-app" class="page">
+    <div id="task-active" style="display:none;" class="mission-status">
+        <span>⚡ TÂCHE EN COURS...</span>
+        <button onclick="endTask()" style="background:white; color:var(--primary); border:none; padding:6px 12px; border-radius:6px; font-weight:900; cursor:pointer;">TERMINER</button>
     </div>
 
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-        <img id="peer-img" src="" style="width:45px; height:45px; border-radius:50%; border:2px solid var(--primary);">
-        <h3 id="peer-name">Contact</h3>
-        <i class="fa fa-phone" style="margin-left:auto; color:var(--primary);" onclick="alert('Appel...')"></i>
+    <div class="chat-header">
+        <img id="peer-img" src="" style="width:45px; height:45px; border-radius:50%; border:2px solid var(--primary); object-fit:cover;">
+        <div>
+            <h3 id="peer-name">Expert Kin Musala</h3>
+            <p style="font-size:0.7rem; color:#4CAF50;">● Disponible</p>
+        </div>
+        <i class="fa fa-phone" style="margin-left:auto; color:var(--primary); font-size:1.2rem;" onclick="alert('Appel direct...')"></i>
     </div>
 
-    <div id="chat-box" style="height:55vh; overflow-y:auto;">
-        <button id="cmd-btn" class="btn-primary" onclick="orderMission()" style="margin-bottom:20px;">COMMANDER CE SERVICE</button>
+    <div id="chat-messages" class="chat-box">
+        <div style="background:var(--surface); padding:15px; border-radius:15px; margin-bottom:15px;">
+            <p>Bonjour ! Cliquez sur le bouton ci-dessous pour lancer une commande officielle.</p>
+        </div>
+        <button id="order-btn" class="btn-primary" onclick="launchOrder()">COMMANDER UNE MISSION</button>
     </div>
 
-    <div class="chat-footer">
+    <div class="chat-input-container">
         <i class="fa fa-plus-circle"></i>
-        <input type="text" id="chat-input" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
+        <input type="text" id="chat-msg" placeholder="Ecrire un message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
         <i class="fa fa-microphone"></i>
         <i class="fa fa-paper-plane" style="color:var(--primary);" onclick="sendMsg()"></i>
     </div>
 </div>
 
 <script type="module">
+    // IMPORTATION DES MODULES QUE TU AS PARAMÉTRÉS
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k",
@@ -111,68 +119,79 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
-    let myRole = '';
-    let myPhoto = '';
 
-    // Galerie photo
-    document.getElementById('gallery-input').onchange = (e) => {
+    let userRole = '';
+    let photoData = '';
+
+    // GESTION GALERIE PHOTO
+    document.getElementById('file-input').onchange = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onloadend = () => {
-            myPhoto = reader.result;
-            document.getElementById('img-preview').src = reader.result;
-            document.getElementById('img-preview').style.display = 'block';
-            document.getElementById('icon-cam').style.display = 'none';
+            photoData = reader.result;
+            document.getElementById('preview').src = reader.result;
+            document.getElementById('preview').style.display = 'block';
+            document.getElementById('cam-icon').style.display = 'none';
         };
         reader.readAsDataURL(file);
     };
 
-    window.startReg = (role) => {
-        myRole = role;
-        document.getElementById('f-only').style.display = role === 'freelance' ? 'block' : 'none';
-        document.getElementById('hero').classList.remove('active');
-        document.getElementById('signup').classList.add('active');
+    window.goToSignup = (role) => {
+        userRole = role;
+        document.getElementById('freelance-only').style.display = role === 'freelance' ? 'block' : 'none';
+        switchPage('signup');
     };
 
-    window.finishReg = async () => {
+    window.handleAuth = async () => {
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-pass').value;
         const name = document.getElementById('reg-name').value;
-        if(!myPhoto || !name) return alert("Photo et Nom obligatoires");
-        
-        await addDoc(collection(db, "users"), { name, role: myRole, photo: myPhoto });
-        
-        document.getElementById('signup').classList.remove('active');
-        document.getElementById('chat-ui').classList.add('active');
-        document.getElementById('peer-img').src = myPhoto;
-        if(myRole === 'freelance') document.getElementById('cmd-btn').style.display = 'none';
+
+        if(!email || !pass || !photoData) return alert("Photo, Email et Mot de passe requis !");
+
+        try {
+            // Création dans Auth
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            // Sauvegarde dans Firestore
+            await setDoc(doc(db, "users", res.user.uid), {
+                uid: res.user.uid,
+                name: name,
+                email: email,
+                role: userRole,
+                photo: photoData,
+                phone: document.getElementById('reg-mpesa').value
+            });
+            
+            document.getElementById('peer-img').src = photoData;
+            switchPage('main-app');
+        } catch (err) { alert("Erreur : " + err.message); }
     };
 
-    window.orderMission = () => {
-        const box = document.getElementById('chat-box');
-        box.innerHTML += `<div style="background:var(--surface); padding:15px; border-radius:10px; margin-top:10px;">
-            <b>MISSION ENVOYÉE</b><br>En attente d'acceptation par le freelance...
-        </div>`;
-        // Simulation acceptation
-        setTimeout(() => {
-            box.innerHTML += `<div style="background:var(--primary); padding:15px; border-radius:10px; margin-top:10px;">
-                <b>MISSION ACCEPTÉE !</b><br>Le travail commence.
-            </div>`;
-            document.getElementById('task-bar').style.display = 'flex';
-        }, 2000);
+    window.launchOrder = () => {
+        document.getElementById('chat-messages').innerHTML += `<div style="background:var(--primary); padding:10px; border-radius:10px; margin-top:10px;">Mission envoyée ! Le talent a accepté.</div>`;
+        document.getElementById('task-active').style.display = 'flex';
+        document.getElementById('order-btn').style.display = 'none';
     };
 
     window.sendMsg = () => {
-        const msg = document.getElementById('chat-input').value;
-        if(msg.match(/[0-9]{8,}/)) return alert("SÉCURITÉ : Interdiction d'envoyer des numéros de téléphone !");
-        if(!msg) return;
-        document.getElementById('chat-box').innerHTML += `<p style="text-align:right; margin:10px;">${msg}</p>`;
-        document.getElementById('chat-input').value = "";
+        const m = document.getElementById('chat-msg').value;
+        if(m.match(/[0-9]{8,}/)) return alert("Sécurité : Interdiction d'échanger des numéros personnels.");
+        if(!m) return;
+        document.getElementById('chat-messages').innerHTML += `<p style="text-align:right; margin:10px;">${m}</p>`;
+        document.getElementById('chat-msg').value = "";
     };
 
-    window.endMission = () => {
-        alert("FÉLICITATIONS ! Travail terminé.\n\nVeuillez envoyer le paiement au numéro sécurisé :\n📞 0813339164\n\n(Le freelance sera payé après validation)");
-        document.getElementById('task-bar').style.display = 'none';
+    window.endTask = () => {
+        alert("BRAVO ! Travail terminé.\n\nCher client, versez le paiement au numéro central :\n📞 0813339164\n\nNous libérons les fonds au freelance dès réception.");
+        document.getElementById('task-active').style.display = 'none';
     };
+
+    function switchPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
 </script>
 </body>
 </html>
