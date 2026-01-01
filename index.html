@@ -17,12 +17,13 @@
         .btn-red { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
         .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav i { font-size: 1.4rem; color: #555; }
+        .nav i { font-size: 1.4rem; color: #555; cursor: pointer; }
         .nav i.active { color: var(--primary); }
         .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; }
         .msg.mine { align-self: flex-end; background: var(--primary); margin-left: auto; }
         .msg.theirs { align-self: flex-start; background: var(--surface); }
-        .mission-card { background: var(--primary); padding: 15px; border-radius: 15px; margin-top: 10px; }
+        .mission-box { background: #fff; color: #000; padding: 15px; border-radius: 15px; margin: 10px 0; font-weight: bold; text-align: center; }
+        .mission-item { background: var(--surface); padding: 15px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -40,8 +41,8 @@
         <div class="photo-picker" onclick="document.getElementById('fInp').click()"><i class="fa fa-camera"></i><img id="pview"></div>
         <input type="file" id="fInp" hidden accept="image/*">
         <input type="text" id="name" placeholder="Nom complet" class="field">
-        <select id="role" class="field"><option value="client">Client</option><option value="freelance">Freelance</option></select>
-        <input type="text" id="job" placeholder="Métier" class="field">
+        <select id="role" class="field" onchange="toggleJobField()"><option value="client">Client</option><option value="freelance">Freelance</option></select>
+        <input type="text" id="job" placeholder="Ton métier (ex: Menuisier, Électricien)" class="field" style="display:none;">
         <input type="text" id="phone" placeholder="Numéro M-Pesa" class="field">
     </div>
     <input type="email" id="email" placeholder="Email" class="field">
@@ -50,14 +51,14 @@
 </div>
 
 <div id="explore" class="page">
-    <input type="text" id="search" placeholder="Rechercher un métier..." class="field" onkeyup="searchEngine()">
+    <div class="field" style="display:flex; align-items:center;"><i class="fa fa-search"></i><input type="text" id="search" placeholder="Rechercher par métier (ex: Électricien)..." style="background:none; border:none; color:white; width:100%; margin-left:10px;" onkeyup="searchEngine()"></div>
     <div id="userList"></div>
 </div>
 
 <div id="chat" class="page">
     <div id="taskBar" style="display:none; background:var(--primary); padding:10px; border-radius:10px; margin-bottom:10px; font-weight:800; justify-content:space-between; align-items:center;">
         <span>MISSION EN COURS</span>
-        <button id="endBtn" style="display:none; background:white; color:var(--primary); border:none; padding:5px; border-radius:5px;" onclick="rateFreelance()">TERMINER</button>
+        <button id="endBtn" style="display:none; background:white; color:var(--primary); border:none; padding:5px 10px; border-radius:5px; font-weight:900;" onclick="rateFreelance()">TERMINER</button>
     </div>
     <div style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #333; padding-bottom:10px;">
         <img id="peerImg" style="width:45px; height:45px; border-radius:50%; object-fit:cover; cursor:pointer;" onclick="viewPeerInfo()">
@@ -72,9 +73,9 @@
 
 <div id="account" class="page">
     <div id="myProfile" style="text-align:center;"></div>
-    <h3 style="margin-top:20px;">Missions Acceptées</h3>
-    <div id="myMissionsList"></div>
-    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="location.reload()">DÉCONNEXION</button>
+    <h3 style="margin-top:25px; border-bottom:1px solid #333; padding-bottom:5px;">Missions avec mes clients</h3>
+    <div id="myMissionsList" style="margin-top:10px;">Aucune mission acceptée.</div>
+    <button class="btn-red" style="background:#333; margin-top:30px;" onclick="location.reload()">DÉCONNEXION</button>
 </div>
 
 <div class="nav" id="navbar" style="display:none;">
@@ -94,6 +95,10 @@
     const db = getFirestore(app);
 
     let me = null, peer = null, photoData = "", chatSub = null;
+
+    window.toggleJobField = () => {
+        document.getElementById('job').style.display = document.getElementById('role').value === 'freelance' ? 'block' : 'none';
+    };
 
     document.getElementById('fInp').onchange = (e) => {
         const r = new FileReader(); r.onload = () => { photoData = r.result; document.getElementById('pview').src = photoData; }; r.readAsDataURL(e.target.files[0]);
@@ -121,7 +126,8 @@
     });
 
     function updateProfileUI() {
-        document.getElementById('myProfile').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p><b>Note: ${me.avgNote}/10</b>`;
+        const displayJob = me.role === 'freelance' ? me.job + " Freelance" : "Client";
+        document.getElementById('myProfile').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2 style="margin-top:10px;">${me.name}</h2><p style="color:var(--primary); font-weight:bold;">${displayJob}</p><b>Note: ${me.avgNote}/10</b>`;
     }
 
     function loadUsers() {
@@ -130,9 +136,10 @@
             snap.forEach(d => {
                 const u = d.data();
                 if(u.uid !== me.uid && u.role !== me.role) {
+                    const label = u.role === 'freelance' ? u.job + " Freelance" : "Client";
                     list.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-top:10px;">
-                        <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-                        <div><b>${u.name}</b><br><small>${u.job || u.role} | ★ ${u.avgNote}</small></div>
+                        <img src="${u.photo}" style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+                        <div><b>${u.name}</b><br><small style="color:var(--primary); font-weight:700;">${label}</small><br><small>★ ${u.avgNote}/10</small></div>
                     </div>`;
                 }
             });
@@ -147,19 +154,21 @@
         const q = query(collection(db, "messages"), orderBy("time", "asc"));
         chatSub = onSnapshot(q, (snap) => {
             const flow = document.getElementById('chatFlow'); flow.innerHTML = "";
-            if(me.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="sendOrder()">COMMANDER MISSION</button>`;
+            if(me.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="sendOrder()">LANCER LA MISSION</button>`;
             snap.forEach(d => {
                 const m = d.data();
                 if((m.from === me.uid && m.to === peer.uid) || (m.from === peer.uid && m.to === me.uid)) {
                     if(m.type === 'order' && me.role === 'freelance' && m.status === 'pending') {
-                        flow.innerHTML += `<div class="mission-card">Mission de ${peer.name}<br><button onclick="ansOrder('${d.id}', 'accepted')">ACCEPTER</button> <button onclick="ansOrder('${d.id}', 'refused')">REFUSER</button></div>`;
+                        flow.innerHTML += `<div class="mission-box">COMMANDE DE : ${peer.name}<br><br><button onclick="ansOrder('${d.id}', 'accepted')" style="background:green; color:white; border:none; padding:10px; border-radius:8px; margin-right:10px;">ACCEPTER</button> <button onclick="ansOrder('${d.id}', 'refused')" style="background:#333; color:white; border:none; padding:10px; border-radius:8px;">REFUSER</button></div>`;
                     } else {
                         const side = m.from === me.uid ? 'mine' : 'theirs';
-                        flow.innerHTML += `<div class="msg ${side}">${m.text}</div>`;
+                        flow.innerHTML += `<div class="msg ${side}">${m.text || 'Mission envoyée'}</div>`;
                         if(m.status === 'accepted') {
                             document.getElementById('taskBar').style.display = 'flex';
                             if(me.role === 'client') document.getElementById('endBtn').style.display = 'block';
-                            if(me.role === 'freelance') document.getElementById('myMissionsList').innerHTML = `<div class="mission-card">Client: ${peer.name}</div>`;
+                            if(me.role === 'freelance') {
+                                document.getElementById('myMissionsList').innerHTML = `<div class="mission-item"><b>Client :</b> ${peer.name}<br><small>En cours...</small></div>`;
+                            }
                         }
                     }
                 }
@@ -170,34 +179,40 @@
 
     window.sendMsg = async () => {
         const t = document.getElementById('msgInp').value;
-        if(t.match(/[0-9]{8,}/)) return alert("Interdit!");
+        if(t.match(/[0-9]{8,}/)) return alert("Sécurité : Échange de numéros interdit !");
+        if(!t) return;
         await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: t, time: Date.now() });
         document.getElementById('msgInp').value = "";
     };
 
-    window.sendOrder = async () => { await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, type: 'order', status: 'pending', time: Date.now() }); };
+    window.sendOrder = async () => { await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, type: 'order', status: 'pending', time: Date.now(), text: "Offre de mission envoyée" }); };
 
     window.ansOrder = async (id, stat) => {
         await updateDoc(doc(db, "messages", id), { status: stat });
-        await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: stat === 'accepted' ? "MISSION ACCEPTÉE ✅" : "MISSION REFUSÉE ❌", time: Date.now() });
+        await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: stat === 'accepted' ? "J'ACCEPTE LA MISSION ✅" : "DÉSOLÉ, JE REFUSE ❌", time: Date.now() });
     };
 
     window.rateFreelance = async () => {
-        const note = prompt("Notez le freelance sur 10 :");
+        const note = prompt("Travail terminé ! Notez cet expert sur 10 :");
         if(note >= 0 && note <= 10) {
             const newCount = peer.notesCount + 1;
             const newAvg = ((peer.avgNote * peer.notesCount) + Number(note)) / newCount;
             await updateDoc(doc(db, "users", peer.uid), { avgNote: newAvg.toFixed(1), notesCount: newCount });
-            alert("Merci ! Argent à envoyer au 0813339164");
+            alert("Mission terminée ! Argent à envoyer au 0813339164. Merci !");
             document.getElementById('taskBar').style.display = 'none';
         }
     };
 
-    window.viewPeerInfo = () => { alert(`Nom: ${peer.name}\nMétier: ${peer.job}\nNote: ${peer.avgNote}/10`); };
+    window.viewPeerInfo = () => { 
+        const label = peer.role === 'freelance' ? peer.job + " Freelance" : "Client";
+        alert(`Nom: ${peer.name}\nSpécialité: ${label}\nNote: ${peer.avgNote}/10`); 
+    };
+
     window.searchEngine = () => {
         const v = document.getElementById('search').value.toLowerCase();
         document.querySelectorAll('#userList > div').forEach(d => d.style.display = d.innerText.toLowerCase().includes(v) ? 'flex' : 'none');
     };
+
     function switchPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); switchPage(id); };
 </script>
