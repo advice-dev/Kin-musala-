@@ -3,228 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KIN MUSALA | Elite</title>
+    <title>KIN MUSALA</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; }
-        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
+        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 90px; }
         .page.active { display: block; }
-
-        /* Photo Profil Caméra */
-        .photo-picker { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); background: #000; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; }
+        .photo-picker { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; }
         .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
-        
         .btn-red { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 10px; cursor: pointer; }
         .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
-
-        /* Chat */
-        #chatFlow { height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
-        .msg { padding: 12px; border-radius: 15px; max-width: 80%; font-size: 0.9rem; position: relative; }
-        .msg.mine { align-self: flex-end; background: var(--primary); border-bottom-right-radius: 2px; }
-        .msg.theirs { align-self: flex-start; background: var(--surface); border-bottom-left-radius: 2px; }
-        .msg img { max-width: 100%; border-radius: 10px; }
-
-        /* Navigation */
         .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav i { font-size: 1.5rem; color: #555; cursor: pointer; }
+        .nav i { font-size: 1.4rem; color: #555; cursor: pointer; }
         .nav i.active { color: var(--primary); }
-
-        /* Modal Info */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: var(--surface); width: 85%; padding: 25px; border-radius: 20px; text-align: center; border: 1px solid var(--primary); }
+        #chatFlow { height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px 0; }
+        .msg { padding: 12px; border-radius: 15px; max-width: 80%; font-size: 0.9rem; position: relative; }
+        .msg.mine { align-self: flex-end; background: var(--primary); }
+        .msg.theirs { align-self: flex-start; background: var(--surface); }
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index:2000; }
+        .modal-content { background:var(--surface); padding:25px; border-radius:20px; width:85%; text-align:center; }
     </style>
 </head>
 <body>
 
-<div id="auth-page" class="page active">
-    <h1 style="text-align:center; font-weight:900; margin-bottom:30px;">KIN MUSALA</h1>
-    <div id="reg-fields">
-        <div class="photo-picker" onclick="document.getElementById('fInp').click()"><i class="fa fa-camera"></i><img id="prev" style="display:none;"></div>
+<div id="hero" class="page active">
+    <div style="text-align:center; margin-top:20vh;">
+        <h1 style="font-size:3.5rem; font-weight:900;">KIN MUSALA</h1>
+        <button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button>
+        <button class="btn-red" style="background:#222;" onclick="showAuth('login')">SE CONNECTER</button>
+    </div>
+</div>
+
+<div id="auth" class="page">
+    <h2 id="atitle" style="text-align:center; margin-bottom:20px;">Inscription</h2>
+    <div id="regOnly">
+        <div class="photo-picker" onclick="document.getElementById('fInp').click()"><i class="fa fa-camera"></i><img id="pview" style="display:none;"></div>
         <input type="file" id="fInp" hidden accept="image/*">
-        <input type="text" id="name" placeholder="Nom Complet" class="field">
-        <select id="role" class="field"><option value="client">Client</option><option value="freelance">Freelance (Expert)</option></select>
-        <input type="text" id="job" placeholder="Ton métier (ex: Électricien)" class="field">
-        <input type="text" id="phone" placeholder="Numéro M-Pesa / Airtel Money" class="field">
+        <input type="text" id="name" placeholder="Nom complet" class="field">
+        <select id="role" class="field"><option value="client">Client</option><option value="freelance">Freelance</option></select>
+        <input type="text" id="job" placeholder="Métier (Ex: Plombier, Dev...)" class="field">
+        <input type="text" id="phone" placeholder="Numéro M-Pesa" class="field">
     </div>
     <input type="email" id="email" placeholder="Email" class="field">
     <input type="password" id="pass" placeholder="Mot de passe" class="field">
-    <button class="btn-red" id="mainAuthBtn" onclick="handleAuth()">S'inscrire</button>
-    <p id="toggleAuth" onclick="toggleM()" style="text-align:center; margin-top:20px; opacity:0.6;">Déjà un compte ? Se connecter</p>
+    <button class="btn-red" onclick="handleAuth()">CONFIRMER</button>
 </div>
 
-<div id="explore-page" class="page">
-    <input type="text" id="search" placeholder="Rechercher par métier (ex: Plombier)..." class="field" onkeyup="filterUsers()">
+<div id="explore" class="page">
+    <div class="field" style="display:flex; align-items:center;"><i class="fa fa-search"></i><input type="text" id="search" placeholder="Rechercher un métier..." style="background:none; border:none; color:white; width:100%; margin-left:10px;" onkeyup="searchJob()"></div>
     <div id="userList"></div>
 </div>
 
-<div id="chat-page" class="page">
+<div id="chat" class="page">
+    <div id="taskBar" style="display:none; background:var(--primary); padding:12px; border-radius:10px; margin-bottom:10px; font-weight:800; justify-content:space-between; align-items:center;">
+        <span id="taskStatus">TÂCHE EN COURS</span>
+        <button id="finishBtn" onclick="askRating()" style="background:white; color:var(--primary); border:none; padding:5px 10px; border-radius:5px; font-weight:900; display:none;">TERMINER</button>
+    </div>
     <div style="display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:1px solid #333;">
-        <img id="cPeerImg" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onclick="showPeerInfo()">
-        <b id="cPeerName">Expert</b>
-        <div id="statusLabel" style="margin-left:auto; font-size:0.7rem; color:var(--primary); font-weight:800;"></div>
+        <img id="peerImg" src="" onclick="showInfo()" style="width:40px; height:40px; border-radius:50%; object-fit:cover; cursor:pointer;">
+        <b id="peerName">...</b>
     </div>
     <div id="chatFlow"></div>
-    <div id="chatInputArea" style="display:flex; gap:10px; align-items:center;">
-        <i class="fa fa-image" style="font-size:1.5rem; color:var(--primary);" onclick="document.getElementById('chatImgInp').click()"></i>
+    <div style="display:flex; gap:10px; align-items:center; padding:10px 0;">
+        <i class="fa fa-image" onclick="document.getElementById('chatImgInp').click()" style="font-size:1.5rem; cursor:pointer;"></i>
         <input type="file" id="chatImgInp" hidden accept="image/*">
-        <input type="text" id="mText" class="field" style="margin:0;" placeholder="Message...">
-        <button class="btn-red" style="width:50px; margin:0;" onclick="sendM()"><i class="fa fa-paper-plane"></i></button>
+        <input type="text" id="msgInp" class="field" style="margin:0;" placeholder="Message...">
+        <i class="fa fa-paper-plane" onclick="sendMsg('text')" style="color:var(--primary); font-size:1.5rem; cursor:pointer;"></i>
     </div>
 </div>
 
-<div id="account-page" class="page">
-    <div id="myInfos" style="text-align:center; background:var(--surface); padding:20px; border-radius:20px; margin-bottom:20px;"></div>
-    <h3>Missions en cours :</h3>
-    <div id="missionList" style="margin-top:10px; color:var(--primary); font-weight:700;">Aucune mission active</div>
-    <button class="btn-red" style="margin-top:40px; background:#333;" onclick="location.reload()">Se déconnecter</button>
-    <button class="btn-red" style="margin-top:10px; opacity:0.3; font-size:0.7rem;" onclick="alert('Compte supprimé')">Supprimer définitivement le compte</button>
+<div id="account" class="page">
+    <div id="myCard" style="text-align:center; background:var(--surface); padding:20px; border-radius:20px;"></div>
+    <h3 style="margin:20px 0 10px;">Missions en cours</h3>
+    <div id="activeMissions">Aucune mission.</div>
+    <button class="btn-red" style="background:#333; margin-top:30px;" onclick="location.reload()">DÉCONNEXION</button>
+    <button class="btn-red" style="opacity:0.3; font-size:0.7rem;" onclick="alert('Supprimé')">SUPPRIMER MON COMPTE</button>
 </div>
 
-<div id="infoModal" class="modal" onclick="this.style.display='none'">
+<div id="modalInfo" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <img id="mImg" src="" style="width:90px; height:90px; border-radius:50%; object-fit:cover;">
-        <h2 id="mName"></h2>
-        <p id="mJob" style="color:var(--primary); font-weight:800;"></p>
-        <p id="mRating" style="margin:10px 0; color:#FFD700;"></p>
-        <button class="btn-red" onclick="closeModal()">Fermer</button>
+        <img id="infoImg" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
+        <h2 id="infoName"></h2>
+        <p id="infoJob" style="color:var(--primary);"></p>
+        <p id="infoRating" style="margin-top:10px; font-weight:bold;"></p>
     </div>
 </div>
 
-<div class="nav" id="botNav" style="display:none;">
-    <i class="fa fa-search active" onclick="nav('explore-page', this)"></i>
-    <i class="fa fa-comment" onclick="nav('chat-page', this)"></i>
-    <i class="fa fa-user" onclick="nav('account-page', this)"></i>
+<div id="navigation" class="nav" style="display:none;">
+    <i class="fa fa-search active" onclick="tab('explore', this)"></i>
+    <i class="fa fa-comment" onclick="tab('chat', this)"></i>
+    <i class="fa fa-user" onclick="tab('account', this)"></i>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k",
-      authDomain: "kin-musala.firebaseapp.com",
-      projectId: "kin-musala",
-      storageBucket: "kin-musala.firebasestorage.app",
-      messagingSenderId: "1055942721226",
-      appId: "1:1055942721226:web:a59dffc178245dfba4be33"
-    };
-
+    const firebaseConfig = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let me = null;
-    let peer = null;
-    let photoB64 = "";
-    let mode = 'signup';
+    let me = null, peer = null, photo = "", chatUnsub = null;
 
-    // Image Inscription
-    document.getElementById('fInp').onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = () => { photoB64 = reader.result; document.getElementById('prev').src=photoB64; document.getElementById('prev').style.display='block'; };
-        reader.readAsDataURL(e.target.files[0]);
-    };
+    document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload = () => { photo = r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block'; }; r.readAsDataURL(e.target.files[0]); };
 
-    window.toggleM = () => {
-        mode = mode === 'signup' ? 'login' : 'signup';
-        document.getElementById('reg-fields').style.display = mode === 'signup' ? 'block' : 'none';
-        document.getElementById('mainAuthBtn').innerText = mode === 'signup' ? 'S\'inscrire' : 'Se connecter';
-    };
+    window.showAuth = (m) => { document.getElementById('regOnly').style.display = m==='signup'?'block':'none'; document.getElementById('atitle').innerText = m==='signup'?'Inscription':'Connexion'; pg('auth'); };
 
     window.handleAuth = async () => {
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('pass').value;
+        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
         try {
-            if(mode === 'signup') {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                const data = { 
-                    uid: res.user.uid, 
-                    name: document.getElementById('name').value,
-                    role: document.getElementById('role').value,
-                    job: document.getElementById('job').value.toLowerCase(),
-                    phone: document.getElementById('phone').value,
-                    photo: photoB64,
-                    rating: 10,
-                    reviews: 0,
-                    missionActive: ""
-                };
+            if(document.getElementById('regOnly').style.display !== 'none') {
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                const data = { name: document.getElementById('name').value, role: document.getElementById('role').value, phone: document.getElementById('phone').value, job: document.getElementById('job').value, photo, uid: res.user.uid, ratings: [], avgRating: 0 };
                 await setDoc(doc(db, "users", res.user.uid), data);
-            } else { await signInWithEmailAndPassword(auth, email, pass); }
-        } catch(e) { alert(e.message); }
+            } else { await signInWithEmailAndPassword(auth, e, p); }
+        } catch (err) { alert(err.message); }
     };
 
-    onAuthStateChanged(auth, async (user) => {
-        if(user) {
-            const s = await getDoc(doc(db, "users", user.uid));
-            me = s.data();
-            document.getElementById('auth-page').classList.remove('active');
-            document.getElementById('explore-page').classList.add('active');
-            document.getElementById('botNav').style.display = 'flex';
-            loadAccount();
-            loadUsers();
-        }
-    });
+    onAuthStateChanged(auth, async (u) => { if(u) { const s = await getDoc(doc(db, "users", u.uid)); me = s.data(); document.getElementById('navigation').style.display='flex'; pg('explore'); loadList(); updateMyProfile(); } });
 
-    function loadAccount() {
-        document.getElementById('myInfos').innerHTML = `<img src="${me.photo}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;"><br><b>${me.name}</b><br><small>${me.job || 'Client'}</small><br><span style="color:#FFD700;">★ ${me.rating.toFixed(1)}/10</span>`;
-        if(me.missionActive) document.getElementById('missionList').innerText = "Mission avec : " + me.missionActive;
+    function updateMyProfile() {
+        document.getElementById('myCard').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2 style="margin-top:10px;">${me.name}</h2><p>${me.job || 'Client'}</p><p style="color:var(--primary); font-weight:800;">Note : ${me.avgRating}/10</p>`;
     }
 
-    async function loadUsers() {
+    function loadList() {
         onSnapshot(collection(db, "users"), (snap) => {
-            const list = document.getElementById('userList');
-            list.innerHTML = "";
+            const list = document.getElementById('userList'); list.innerHTML = "";
             snap.forEach(d => {
                 const u = d.data();
-                if(u.uid !== me.uid && u.role !== me.role) {
+                if(u.uid !== me.uid && (me.role === 'freelance' ? u.role === 'client' : u.role === 'freelance')) {
                     list.innerHTML += `<div onclick="startChat('${u.uid}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-top:10px;">
-                        <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-                        <div><b>${u.name}</b><br><small>${u.job || 'Client'}</small> • <span style="color:#FFD700;">★ ${u.rating.toFixed(1)}</span></div>
+                        <img src="${u.photo}" style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+                        <div><b>${u.name}</b><br><small>${u.job || 'Client'}</small> <br> <small style="color:var(--primary)">★ ${u.avgRating}/10</small></div>
                     </div>`;
                 }
             });
         });
     }
 
-    window.filterUsers = () => {
-        const query = document.getElementById('search').value.toLowerCase();
-        const users = document.querySelectorAll('#userList > div');
-        users.forEach(u => {
-            const jobText = u.querySelector('small').innerText.toLowerCase();
-            u.style.display = jobText.includes(query) ? 'flex' : 'none';
+    window.searchJob = () => {
+        const val = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('#userList > div').forEach(div => {
+            div.style.display = div.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
         });
-    };
+    }
 
-    window.startChat = async (uid) => {
-        const s = await getDoc(doc(db, "users", uid));
-        peer = s.data();
-        document.getElementById('cPeerName').innerText = peer.name;
-        document.getElementById('cPeerImg').src = peer.photo;
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById('chat-page').classList.add('active');
-
-        const q = query(collection(db, "chats"), orderBy("time", "asc"));
-        onSnapshot(q, (snap) => {
-            const flow = document.getElementById('chatFlow');
-            flow.innerHTML = "";
-            if(me.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="sendMission()">LANCER LA MISSION</button>`;
-            
+    window.startChat = async (id) => {
+        const s = await getDoc(doc(db, "users", id)); peer = s.data();
+        document.getElementById('peerImg').src = peer.photo;
+        document.getElementById('peerName').innerText = peer.name;
+        pg('chat'); if(chatUnsub) chatUnsub();
+        const qC = query(collection(db, "chats"), orderBy("time", "asc"));
+        chatUnsub = onSnapshot(qC, (snap) => {
+            const flow = document.getElementById('chatFlow'); flow.innerHTML = "";
+            if(me.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="sendOrder()">COMMANDER MISSION</button>`;
             snap.forEach(d => {
                 const m = d.data();
                 if((m.to === peer.uid && m.from === me.uid) || (m.from === peer.uid && m.to === me.uid)) {
-                    if(m.type === 'mission' && m.status === 'pending' && me.role === 'freelance') {
-                        flow.innerHTML += `<div class="msg theirs" style="background:#fff; color:#000;">NOUVELLE MISSION ! <br><br><button class="btn-red" onclick="acceptM('${d.id}', '${m.clientName}')">ACCEPTER</button></div>`;
-                    } else if(m.type === 'img') {
-                        const side = m.from === me.uid ? 'mine' : 'theirs';
-                        flow.innerHTML += `<div class="msg ${side}"><img src="${m.img}"></div>`;
+                    if(m.type === 'order' && me.role === 'freelance' && m.status === 'pending') {
+                        flow.innerHTML += `<div style="background:white; color:black; padding:15px; border-radius:15px; margin:10px 0; text-align:center;"><b>MISSION DE ${peer.name}</b><br><br><button onclick="ansOrder('${d.id}', 'accepted')" style="background:green; color:white; border:none; padding:10px; border-radius:5px; margin-right:10px;">ACCEPTER</button><button onclick="ansOrder('${d.id}', 'refused')" style="background:red; color:white; border:none; padding:10px; border-radius:5px;">REFUSER</button></div>`;
                     } else {
                         const side = m.from === me.uid ? 'mine' : 'theirs';
-                        flow.innerHTML += `<div class="msg ${side}">${m.text}</div>`;
+                        const content = m.img ? `<img src="${m.img}">` : m.text;
+                        flow.innerHTML += `<div class="msg ${side}">${content}</div>`;
+                        if(m.status === 'accepted') {
+                            document.getElementById('taskBar').style.display='flex';
+                            if(me.role === 'client') document.getElementById('finishBtn').style.display='block';
+                        }
                     }
                 }
             });
@@ -232,64 +183,59 @@
         });
     };
 
-    window.sendM = async () => {
-        const text = document.getElementById('mText').value;
-        if(text.match(/[0-9]{8,}/)) return alert("Sécurité : Numéros interdits !");
-        if(!text) return;
-        await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, text, time: Date.now() });
-        document.getElementById('mText').value = "";
+    window.sendMsg = async (type, data = null) => {
+        const text = document.getElementById('msgInp').value;
+        if(type === 'text' && text.match(/[0-9]{8,}/)) return alert("Numéros interdits !");
+        await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, text: type==='text'?text:'', img: type==='img'?data:null, time: Date.now() });
+        document.getElementById('msgInp').value = "";
     };
 
     document.getElementById('chatImgInp').onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = async () => {
-            await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, img: reader.result, type: 'img', time: Date.now() });
-        };
-        reader.readAsDataURL(e.target.files[0]);
+        const r = new FileReader(); r.onload = () => sendMsg('img', r.result); r.readAsDataURL(e.target.files[0]);
     };
 
-    window.sendMission = async () => {
-        await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, clientName: me.name, type: 'mission', status: 'pending', time: Date.now() });
-        alert("Demande envoyée !");
+    window.sendOrder = async () => {
+        await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, type: 'order', status: 'pending', time: Date.now(), clientName: me.name });
     };
 
-    window.acceptM = async (chatId, clientName) => {
-        await updateDoc(doc(db, "chats", chatId), { status: 'accepted' });
-        await updateDoc(doc(db, "users", me.uid), { missionActive: clientName });
-        await updateDoc(doc(db, "users", peer.uid), { missionActive: me.name });
-        document.getElementById('statusLabel').innerHTML = `ACTIVE <button onclick="finishM()" style="background:#fff; border:none; border-radius:4px; margin-left:5px;">TERMINER</button>`;
-        alert("Mission acceptée ! Regardez votre profil.");
-    };
-
-    window.finishM = async () => {
-        if(me.role === 'client') {
-            const note = prompt("Travail fini ! Notez le freelance sur 10 :");
-            if(note) {
-                const newReviews = peer.reviews + 1;
-                const newRating = ((peer.rating * peer.reviews) + parseFloat(note)) / newReviews;
-                await updateDoc(doc(db, "users", peer.uid), { rating: newRating, reviews: newReviews, missionActive: "" });
-                await updateDoc(doc(db, "users", me.uid), { missionActive: "" });
-            }
+    window.ansOrder = async (id, status) => {
+        await updateDoc(doc(db, "chats", id), { status });
+        const text = status === 'accepted' ? "MISSION ACCEPTEE ! ✅" : "MISSION REFUSEE ❌";
+        await addDoc(collection(db, "chats"), { from: me.uid, to: peer.uid, text, time: Date.now() });
+        if(status === 'accepted') {
+            document.getElementById('activeMissions').innerHTML = `<div style="padding:10px; background:var(--primary); border-radius:10px; margin-top:10px;">Mission avec : ${peer.name}</div>`;
         }
-        alert("Paiement : Envoyez l'argent au 0813339164");
-        location.reload();
     };
 
-    window.showPeerInfo = () => {
-        document.getElementById('mImg').src = peer.photo;
-        document.getElementById('mName').innerText = peer.name;
-        document.getElementById('mJob').innerText = peer.job || "Client Elite";
-        document.getElementById('mRating').innerText = "Note : " + peer.rating.toFixed(1) + "/10";
-        document.getElementById('infoModal').style.display = 'flex';
+    window.askRating = () => {
+        const note = prompt("Mission terminée ! Notez le freelance sur 10 :");
+        if(note && !isNaN(note) && note >= 0 && note <= 10) {
+            finishMission(note);
+        } else { alert("Veuillez entrer une note valide entre 0 et 10"); }
     };
 
-    window.nav = (id, el) => {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav i').forEach(i=>i.classList.remove('active'));
-        el.classList.add('active');
+    async function finishMission(note) {
+        const pRef = doc(db, "users", peer.uid);
+        const pSnap = await getDoc(pRef);
+        const pData = pSnap.data();
+        const newRatings = pData.ratings || [];
+        newRatings.push(Number(note));
+        const avg = (newRatings.reduce((a,b)=>a+b, 0) / newRatings.length).toFixed(1);
+        await updateDoc(pRef, { ratings: newRatings, avgRating: avg });
+        alert("Merci ! Argent à envoyer au 0813339164. Le freelance a reçu sa note.");
+        document.getElementById('taskBar').style.display='none';
+    }
+
+    window.showInfo = () => {
+        document.getElementById('infoImg').src = peer.photo;
+        document.getElementById('infoName').innerText = peer.name;
+        document.getElementById('infoJob').innerText = peer.job || 'Client';
+        document.getElementById('infoRating').innerText = "Note globale : " + peer.avgRating + "/10";
+        document.getElementById('modalInfo').style.display = 'flex';
     };
-    window.closeModal = () => document.getElementById('infoModal').style.display = 'none';
+
+    function pg(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i=>i.classList.remove('active')); el.classList.add('active'); pg(id); };
 </script>
 </body>
 </html>
