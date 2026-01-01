@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KIN MUSALA | Elite</title>
+    <title>KIN MUSALA | Elite Networking</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            --primary: #FF4B3A; /* Ton rouge bouton exact */
-            --bg-start: #1A1C29; /* Ton dégradé haut */
-            --bg-end: #0D0E14;   /* Ton dégradé bas */
+            --primary: #FF4B3A; 
+            --bg-start: #1A1C29; 
+            --bg-end: #0D0E14;   
             --surface: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
             --text: #FFFFFF;
@@ -20,55 +20,67 @@
             background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); 
             color: var(--text); 
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        /* UI Elements */
+        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:16px; font-weight:700; width:100%; cursor:pointer; }
+        .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:16px; font-weight:700; width:100%; cursor:pointer; }
+        .btn-accept { background: #28a745; color: white; border-radius: 10px; border:none; padding:10px; font-weight:700; flex:1; }
+        .btn-refuse { background: #dc3545; color: white; border-radius: 10px; border:none; padding:10px; font-weight:700; flex:1; }
+
         .page { display: none; padding: 20px 5% 100px; max-width: 500px; margin: 0 auto; }
         .page.active { display: block; }
-        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
-        .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:18px; font-weight:700; width:100%; cursor:pointer; margin-top:10px;}
-        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; outline:none; }
+        .field { width:100%; padding:15px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; outline:none; }
         
-        /* Cards */
-        .card { background: var(--surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; position: relative; }
-        .status-badge { background: #FFB800; color: black; padding: 4px 10px; border-radius: 10px; font-size: 0.7rem; font-weight: 800; margin-bottom: 10px; display: inline-block; }
+        .card { background: var(--surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .status-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 5px; }
 
-        /* Modal */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index:2000; padding:20px; }
-        .modal-card { background: #1A1C29; border-radius: 25px; padding: 30px; width: 100%; text-align: center; border: 1px solid var(--primary); }
+        /* Modal Mission */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index:3000; padding:20px; }
+        .modal-card { background: #1A1C29; border-radius: 25px; padding: 25px; width: 100%; text-align: center; border: 1px solid var(--primary); }
 
-        .tab-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index:1000; }
-        .tab-item { color: gray; font-size: 0.7rem; text-align: center; cursor:pointer; }
+        .tab-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .tab-item { color: #555; font-size: 0.7rem; text-align: center; cursor:pointer; }
         .tab-item.active { color: var(--primary); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="info-modal" class="modal" onclick="this.style.display='none'">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <div id="modal-body"></div>
+<div id="mission-modal" class="modal">
+    <div class="modal-card">
+        <h2 style="color:var(--primary);">NOUVELLE MISSION !</h2>
+        <p id="mission-text" style="margin:15px 0; line-height:1.4;"></p>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-accept" onclick="updateMission('en cours')">Accepter</button>
+            <button class="btn-refuse" onclick="closeMission()">Refuser</button>
+        </div>
     </div>
 </div>
 
+<nav id="navbar" class="hidden" style="padding: 15px 5%; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-weight:900; font-size:1.2rem;">KIN<span style="color:var(--primary);"> MUSALA</span></div>
+    <img id="nav-pfp" src="" style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+</nav>
+
 <div id="hero" class="page active">
-    <div style="text-align: center; padding-top: 10vh;">
-        <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; line-height:0.9;">KIN<br>MUSALA.</h1>
-        <p style="opacity: 0.7; margin: 30px 0 40px; line-height: 1.5;">L'élite des talents de Kinshasa.<br>Sécurisé. Rapide. Professionnel.</p>
-        <button class="btn-primary" onclick="startReg('client')">Trouver un Expert</button>
+    <div style="text-align: center; padding-top: 8vh;">
+        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -3px; line-height:0.85;">KIN<br>MUSALA.</h1>
+        <p style="opacity: 0.6; margin: 25px 0 40px; font-size:0.9rem;">L'excellence du freelancing à Kinshasa.</p>
+        <button class="btn-primary" onclick="startReg('client')" style="margin-bottom:15px;">Trouver un Expert</button>
         <button class="btn-outline" onclick="startReg('freelance')">Devenir Freelance</button>
     </div>
 </div>
 
 <div id="signup" class="page">
-    <h2 style="margin-bottom:20px; text-align:center;">Création du profil</h2>
+    <h2 style="margin-bottom:20px; text-align:center;">Créer votre profil</h2>
     <input type="text" id="reg-name" placeholder="Nom complet" class="field">
     <input type="email" id="reg-email" placeholder="Email" class="field">
-    <input type="text" id="reg-photo" placeholder="URL de votre photo de profil" class="field">
-    <input type="text" id="reg-payment" placeholder="Numéro M-Pesa / Airtel Money" class="field">
+    <input type="text" id="reg-photo" placeholder="Lien URL de votre photo" class="field">
+    <input type="text" id="reg-pay" placeholder="Numéro M-Pesa / Orange (Paiement)" class="field">
     
     <div id="freelance-only" class="hidden">
-        <input type="text" id="reg-domain" placeholder="Votre métier (ex: Plombier)" class="field">
+        <input type="text" id="reg-domain" placeholder="Métier (ex: Traducteur, Dev)" class="field">
         <input type="number" id="reg-exp" placeholder="Années d'expérience" class="field">
     </div>
     
@@ -76,23 +88,24 @@
 </div>
 
 <div id="explore" class="page">
-    <h2 style="margin-bottom:20px;">Talents disponibles</h2>
+    <h2 style="margin-bottom:20px;">Experts disponibles</h2>
     <div id="talent-list"></div>
 </div>
 
-<div id="chat" class="page">
-    <h2 style="margin-bottom:20px;">Missions & Chat</h2>
-    <div id="mission-list"></div>
+<div id="chat-page" class="page">
+    <h2 style="margin-bottom:20px;">Mes Missions</h2>
+    <div id="mission-status-container"></div>
 </div>
 
 <div id="tab-bar" class="tab-bar hidden">
-    <div class="tab-item active" id="btn-exp" onclick="showPage('explore')"><i class="fa fa-search"></i><br>Explorer</div>
-    <div class="tab-item" id="btn-chat" onclick="showPage('chat')"><i class="fa fa-comment"></i><br>Missions</div>
+    <div class="tab-item active" id="t-explore" onclick="navTo('explore')"><i class="fa fa-search fa-lg"></i><br>Explorer</div>
+    <div class="tab-item" id="t-chat" onclick="navTo('chat-page')"><i class="fa fa-briefcase fa-lg"></i><br>Missions</div>
+    <div class="tab-item" onclick="logout()"><i class="fa fa-sign-out-alt fa-lg"></i><br>Quitter</div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k",
@@ -105,15 +118,20 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let currentUser = null;
+    let currentUser = JSON.parse(localStorage.getItem('km_user')) || null;
     let tempRole = '';
 
     window.showPage = (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        if(id === 'explore') loadTalents();
+    };
+
+    window.navTo = (id) => {
+        showPage(id);
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        if(id === 'explore') { loadTalents(); document.getElementById('btn-exp').classList.add('active'); }
-        if(id === 'chat') { loadMissions(); document.getElementById('btn-chat').classList.add('active'); }
+        if(id === 'explore') document.getElementById('t-explore').classList.add('active');
+        if(id === 'chat-page') document.getElementById('t-chat').classList.add('active');
     };
 
     window.startReg = (role) => {
@@ -123,111 +141,129 @@
     };
 
     document.getElementById('btn-save').onclick = async () => {
-        const userData = {
+        const u = {
             name: document.getElementById('reg-name').value,
             email: document.getElementById('reg-email').value,
-            photo: document.getElementById('reg-photo').value || "https://ui-avatars.com/api/?name=User&background=FF4B3A&color=fff",
-            payment: document.getElementById('reg-payment').value,
+            photo: document.getElementById('reg-photo').value || "https://ui-avatars.com/api/?background=FF4B3A&color=fff&name=User",
+            payment: document.getElementById('reg-pay').value,
             role: tempRole,
             domain: document.getElementById('reg-domain').value || "Client",
             exp: document.getElementById('reg-exp').value || 0,
-            rating: 4.8
+            rating: 5.0
         };
-        const docRef = await addDoc(collection(db, "users"), userData);
-        currentUser = { id: docRef.id, ...userData };
-        document.getElementById('tab-bar').classList.remove('hidden');
-        showPage('explore');
+        const docRef = await addDoc(collection(db, "users"), u);
+        currentUser = { id: docRef.id, ...u };
+        localStorage.setItem('km_user', JSON.stringify(currentUser));
+        initApp();
     };
 
     async function loadTalents() {
         const list = document.getElementById('talent-list');
-        list.innerHTML = "Chargement...";
+        list.innerHTML = "";
         const q = query(collection(db, "users"), where("role", "==", "freelance"));
         const snap = await getDocs(q);
-        list.innerHTML = "";
         snap.forEach(d => {
-            const u = d.data();
+            const t = d.data();
+            if(t.email === currentUser.email) return;
             const div = document.createElement('div');
             div.className = "card";
             div.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px;" onclick="openDetail('${d.id}', '${u.name}', '${u.photo}', '${u.domain}', '${u.exp}', '${u.payment}')">
-                    <img src="${u.photo}" style="width:65px; height:65px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-                    <div>
-                        <h3 style="font-size:1.1rem;">${u.name}</h3>
-                        <p style="color:var(--primary); font-size:0.8rem; font-weight:800;">${u.domain}</p>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <img src="${t.photo}" style="width:65px; height:65px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+                    <div style="flex:1;">
+                        <h3 style="font-size:1.1rem;">${t.name}</h3>
+                        <p style="color:var(--primary); font-size:0.8rem; font-weight:700;">${t.domain} • ${t.exp} ans</p>
                     </div>
-                </div>`;
+                </div>
+                <button class="btn-primary" onclick="sendOrder('${d.id}', '${t.name}')" style="margin-top:15px; padding:10px;">Commander</button>
+            `;
             list.appendChild(div);
         });
     }
 
-    window.openDetail = (id, name, photo, domain, exp, payment) => {
-        document.getElementById('modal-body').innerHTML = `
-            <img src="${photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary); margin-bottom:15px;">
-            <h2>${name}</h2>
-            <p style="color:var(--primary); font-weight:800;">${domain}</p>
-            <div style="text-align:left; background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin:15px 0;">
-                <p><b>Expérience:</b> ${exp} ans</p>
-                <p><b>Note:</b> ⭐ 4.8/5</p>
-                <p><b>Paiement:</b> ${payment}</p>
-            </div>
-            <button class="btn-primary" onclick="commander('${id}', '${name}')">Commander maintenant</button>
-        `;
-        document.getElementById('info-modal').style.display = 'flex';
-    };
-
-    window.commander = async (talentId, talentName) => {
+    // ENVOYER UNE COMMANDE
+    window.sendOrder = async (freelanceId, name) => {
         await addDoc(collection(db, "missions"), {
             clientId: currentUser.id,
             clientName: currentUser.name,
-            talentId: talentId,
-            talentName: talentName,
-            status: "en_attente",
+            freelanceId: freelanceId,
+            status: 'en attente',
             createdAt: new Date()
         });
-        alert("Mission envoyée ! Allez dans l'onglet Missions.");
-        document.getElementById('info-modal').style.display = 'none';
-        showPage('chat');
+        alert("Mission envoyée à " + name + " !");
     };
 
-    function loadMissions() {
-        const list = document.getElementById('mission-list');
-        const q = query(collection(db, "missions"));
+    // ECOUTER LES MISSIONS EN TEMPS REEL
+    function listenMissions() {
+        const q = query(collection(db, "missions"), where("freelanceId", "==", currentUser.id));
         onSnapshot(q, (snap) => {
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const m = d.data();
-                if(m.clientId === currentUser.id || m.talentId === currentUser.id) {
-                    const isTalent = m.talentId === currentUser.id;
-                    const div = document.createElement('div');
-                    div.className = "card";
-                    let actionHtml = '';
-                    
-                    if(m.status === 'en_attente' && isTalent) {
-                        actionHtml = `<button class="btn-primary" onclick="updateM('${d.id}', 'en_cours')">Accepter</button>`;
-                    } else if(m.status === 'en_cours') {
-                        actionHtml = `<div class="status-badge" style="background:#00E676">TACHE EN COURS</div>
-                                      <button class="btn-outline" onclick="updateM('${d.id}', 'termine')">Terminer la mission</button>`;
-                    } else if(m.status === 'termine') {
-                        actionHtml = `<div class="status-badge" style="background:gray">MISSION TERMINÉE</div>`;
-                    }
-
-                    div.innerHTML = `
-                        <p style="font-size:0.8rem; opacity:0.6;">Mission avec ${isTalent ? m.clientName : m.talentName}</p>
-                        <h3 style="margin:5px 0 15px 0;">Projet de service</h3>
-                        ${actionHtml}
-                    `;
-                    list.appendChild(div);
+            snap.forEach(change => {
+                const m = change.data();
+                if(m.status === 'en attente') {
+                    document.getElementById('mission-text').innerText = `Le client ${m.clientName} souhaite vous confier une mission.`;
+                    window.currentMissionId = change.id;
+                    document.getElementById('mission-modal').style.display = 'flex';
                 }
             });
+            renderMissionsList();
+        });
+
+        // Ecouter aussi pour le client
+        const q2 = query(collection(db, "missions"), where("clientId", "==", currentUser.id));
+        onSnapshot(q2, () => renderMissionsList());
+    }
+
+    window.updateMission = async (newStatus) => {
+        const mRef = doc(db, "missions", window.currentMissionId);
+        await updateDoc(mRef, { status: newStatus });
+        document.getElementById('mission-modal').style.display = 'none';
+    };
+
+    window.closeMission = () => { document.getElementById('mission-modal').style.display = 'none'; };
+
+    async function renderMissionsList() {
+        const container = document.getElementById('mission-status-container');
+        container.innerHTML = "";
+        const q = query(collection(db, "missions"));
+        const snap = await getDocs(q);
+        
+        snap.forEach(d => {
+            const m = d.data();
+            if(m.clientId === currentUser.id || m.freelanceId === currentUser.id) {
+                const div = document.createElement('div');
+                div.className = "card";
+                const isEnCours = m.status === 'en cours';
+                div.innerHTML = `
+                    <p style="font-size:0.8rem; opacity:0.6;">Mission avec ${m.clientName}</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <span class="status-badge" style="background:${isEnCours ? '#ffc107' : '#28a745'}">${m.status.toUpperCase()}</span>
+                        ${isEnCours && currentUser.role === 'freelance' ? `<button onclick="finishMission('${d.id}')" style="background:white; color:black; border:none; padding:5px 10px; border-radius:10px; font-weight:bold; font-size:0.7rem;">TERMINER</button>` : ''}
+                    </div>
+                `;
+                container.appendChild(div);
+            }
         });
     }
 
-    window.updateM = async (id, status) => {
-        await updateDoc(doc(db, "missions", id), { status: status });
+    window.finishMission = async (id) => {
+        await updateDoc(doc(db, "missions", id), { status: 'terminée' });
+        alert("Félicitations pour cette mission terminée !");
     };
 
+    function initApp() {
+        if(currentUser) {
+            document.getElementById('hero').classList.remove('active');
+            document.getElementById('signup').classList.remove('active');
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('tab-bar').classList.remove('hidden');
+            document.getElementById('nav-pfp').src = currentUser.photo;
+            listenMissions();
+            showPage('explore');
+        }
+    }
+
+    window.logout = () => { localStorage.removeItem('km_user'); location.reload(); };
+    initApp();
 </script>
 </body>
 </html>
-
