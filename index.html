@@ -16,96 +16,92 @@
             --text: #FFFFFF;
         }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { 
-            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); 
-            color: var(--text); 
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); color: var(--text); min-height: 100vh; overflow: hidden; }
         
-        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:16px; font-weight:700; width:100%; cursor:pointer; }
-        .btn-outline { background: #212330; color: white; border-radius: 15px; border:1px solid var(--border); padding:16px; font-weight:700; width:100%; cursor:pointer; }
-        .btn-accept { background: #28a745; color: white; border-radius: 10px; border:none; padding:10px; font-weight:700; flex:1; }
-        .btn-refuse { background: #dc3545; color: white; border-radius: 10px; border:none; padding:10px; font-weight:700; flex:1; }
-
-        .page { display: none; padding: 20px 5% 100px; max-width: 500px; margin: 0 auto; }
-        .page.active { display: block; }
-        .field { width:100%; padding:15px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; outline:none; }
+        .page { display: none; height: 100vh; width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
+        .page.active { display: flex; flex-direction: column; }
         
-        .card { background: var(--surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .status-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 5px; }
+        .btn-primary { background: var(--primary); color: white; border-radius: 15px; border:none; padding:18px; font-weight:700; width:100%; cursor:pointer; }
+        .field { width:100%; padding:16px; border-radius:12px; background: rgba(0,0,0,0.3); border:1px solid var(--border); color:white; margin-bottom:12px; outline:none; }
 
+        /* Style Chat */
+        .chat-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: rgba(13, 14, 20, 0.8); }
+        .mission-bar { background: #FFB800; color: black; padding: 10px; font-weight: 800; text-align: center; font-size: 0.8rem; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 80%; font-size: 0.9rem; position: relative; }
+        .msg.sent { background: var(--primary); align-self: flex-end; }
+        .msg.received { background: var(--surface); align-self: flex-start; }
+        
+        .chat-input-area { padding: 15px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .chat-input-area i { font-size: 1.2rem; color: var(--text-dim); cursor: pointer; }
+        
         /* Modal Mission */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index:3000; padding:20px; }
-        .modal-card { background: #1A1C29; border-radius: 25px; padding: 25px; width: 100%; text-align: center; border: 1px solid var(--primary); }
-
-        .tab-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0D0E14; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .tab-item { color: #555; font-size: 0.7rem; text-align: center; cursor:pointer; }
-        .tab-item.active { color: var(--primary); }
+        .mission-card { background: var(--bg-start); border: 2px solid var(--primary); border-radius: 20px; padding: 20px; text-align: center; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="mission-modal" class="modal">
-    <div class="modal-card">
-        <h2 style="color:var(--primary);">NOUVELLE MISSION !</h2>
-        <p id="mission-text" style="margin:15px 0; line-height:1.4;"></p>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-accept" onclick="updateMission('en cours')">Accepter</button>
-            <button class="btn-refuse" onclick="closeMission()">Refuser</button>
-        </div>
-    </div>
-</div>
-
-<nav id="navbar" class="hidden" style="padding: 15px 5%; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-weight:900; font-size:1.2rem;">KIN<span style="color:var(--primary);"> MUSALA</span></div>
-    <img id="nav-pfp" src="" style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-</nav>
-
 <div id="hero" class="page active">
-    <div style="text-align: center; padding-top: 8vh;">
-        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -3px; line-height:0.85;">KIN<br>MUSALA.</h1>
-        <p style="opacity: 0.6; margin: 25px 0 40px; font-size:0.9rem;">L'excellence du freelancing à Kinshasa.</p>
+    <div style="text-align: center; margin: auto 20px;">
+        <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;">KIN<br>MUSALA.</h1>
+        <p style="opacity: 0.6; margin: 20px 0 40px;">L'excellence du travail à portée de main.</p>
         <button class="btn-primary" onclick="startReg('client')" style="margin-bottom:15px;">Trouver un Expert</button>
-        <button class="btn-outline" onclick="startReg('freelance')">Devenir Freelance</button>
+        <button class="btn-primary" style="background:#212330;" onclick="startReg('freelance')">Devenir Freelance</button>
     </div>
 </div>
 
-<div id="signup" class="page">
-    <h2 style="margin-bottom:20px; text-align:center;">Créer votre profil</h2>
+<div id="signup" class="page" style="padding: 20px;">
+    <h2 style="margin-bottom:20px;">Rejoindre l'élite</h2>
     <input type="text" id="reg-name" placeholder="Nom complet" class="field">
-    <input type="email" id="reg-email" placeholder="Email" class="field">
-    <input type="text" id="reg-photo" placeholder="Lien URL de votre photo" class="field">
-    <input type="text" id="reg-pay" placeholder="Numéro M-Pesa / Orange (Paiement)" class="field">
+    <input type="text" id="reg-phone" placeholder="Numéro M-Pesa / Orange Money" class="field">
+    
+    <label style="display:block; margin-bottom:10px; font-size:0.8rem; opacity:0.7;">Photo de profil (Galerie)</label>
+    <input type="file" id="reg-file" accept="image/*" class="field">
     
     <div id="freelance-only" class="hidden">
-        <input type="text" id="reg-domain" placeholder="Métier (ex: Traducteur, Dev)" class="field">
+        <input type="text" id="reg-domain" placeholder="Votre domaine d'expertise" class="field">
         <input type="number" id="reg-exp" placeholder="Années d'expérience" class="field">
     </div>
-    
-    <button class="btn-primary" id="btn-save">Valider mon inscription</button>
-</div>
-
-<div id="explore" class="page">
-    <h2 style="margin-bottom:20px;">Experts disponibles</h2>
-    <div id="talent-list"></div>
+    <button class="btn-primary" id="btn-save">Créer mon compte</button>
 </div>
 
 <div id="chat-page" class="page">
-    <h2 style="margin-bottom:20px;">Mes Missions</h2>
-    <div id="mission-status-container"></div>
-</div>
+    <div id="mission-status" class="mission-bar hidden">⚠️ TÂCHE EN COURS...</div>
+    <div class="chat-header">
+        <img id="chat-target-img" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+        <div>
+            <b id="chat-target-name">Freelance</b>
+            <div style="font-size:0.7rem; color:#4CD964;">En ligne</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:15px;">
+            <i class="fa fa-phone" onclick="alert('Appel en cours...')"></i>
+            <i class="fa fa-video" onclick="alert('Appel vidéo...')"></i>
+        </div>
+    </div>
 
-<div id="tab-bar" class="tab-bar hidden">
-    <div class="tab-item active" id="t-explore" onclick="navTo('explore')"><i class="fa fa-search fa-lg"></i><br>Explorer</div>
-    <div class="tab-item" id="t-chat" onclick="navTo('chat-page')"><i class="fa fa-briefcase fa-lg"></i><br>Missions</div>
-    <div class="tab-item" onclick="logout()"><i class="fa fa-sign-out-alt fa-lg"></i><br>Quitter</div>
+    <div class="chat-messages" id="chat-box">
+        <div class="msg received">Bonjour ! Comment puis-je vous aider pour votre projet ?</div>
+    </div>
+
+    <div id="client-actions" class="padding:10px; display:flex; gap:5px; padding:10px;">
+        <button id="btn-commander" class="btn-primary" style="font-size:0.8rem; padding:10px;">Commander</button>
+        <button id="btn-terminer" class="btn-primary hidden" style="background:#4CD964; font-size:0.8rem; padding:10px;">Terminer le travail</button>
+    </div>
+
+    <div class="chat-input-area">
+        <i class="fa fa-plus" onclick="document.getElementById('chat-file').click()"></i>
+        <input type="file" id="chat-file" class="hidden">
+        <input type="text" id="msg-input" placeholder="Message..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
+        <i class="fa fa-microphone" id="btn-voice"></i>
+        <i class="fa fa-paper-plane" id="btn-send" style="color:var(--primary);"></i>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k",
@@ -118,152 +114,71 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let currentUser = JSON.parse(localStorage.getItem('km_user')) || null;
-    let tempRole = '';
-
-    window.showPage = (id) => {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'explore') loadTalents();
-    };
-
-    window.navTo = (id) => {
-        showPage(id);
-        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        if(id === 'explore') document.getElementById('t-explore').classList.add('active');
-        if(id === 'chat-page') document.getElementById('t-chat').classList.add('active');
-    };
+    let myUser = null;
 
     window.startReg = (role) => {
-        tempRole = role;
+        myUser = { role };
         document.getElementById('freelance-only').classList.toggle('hidden', role !== 'freelance');
-        showPage('signup');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('signup').classList.add('active');
     };
 
-    document.getElementById('btn-save').onclick = async () => {
-        const u = {
-            name: document.getElementById('reg-name').value,
-            email: document.getElementById('reg-email').value,
-            photo: document.getElementById('reg-photo').value || "https://ui-avatars.com/api/?background=FF4B3A&color=fff&name=User",
-            payment: document.getElementById('reg-pay').value,
-            role: tempRole,
-            domain: document.getElementById('reg-domain').value || "Client",
-            exp: document.getElementById('reg-exp').value || 0,
-            rating: 5.0
-        };
-        const docRef = await addDoc(collection(db, "users"), u);
-        currentUser = { id: docRef.id, ...u };
-        localStorage.setItem('km_user', JSON.stringify(currentUser));
-        initApp();
-    };
-
-    async function loadTalents() {
-        const list = document.getElementById('talent-list');
-        list.innerHTML = "";
-        const q = query(collection(db, "users"), where("role", "==", "freelance"));
-        const snap = await getDocs(q);
-        snap.forEach(d => {
-            const t = d.data();
-            if(t.email === currentUser.email) return;
-            const div = document.createElement('div');
-            div.className = "card";
-            div.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <img src="${t.photo}" style="width:65px; height:65px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-                    <div style="flex:1;">
-                        <h3 style="font-size:1.1rem;">${t.name}</h3>
-                        <p style="color:var(--primary); font-size:0.8rem; font-weight:700;">${t.domain} • ${t.exp} ans</p>
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="sendOrder('${d.id}', '${t.name}')" style="margin-top:15px; padding:10px;">Commander</button>
-            `;
-            list.appendChild(div);
-        });
-    }
-
-    // ENVOYER UNE COMMANDE
-    window.sendOrder = async (freelanceId, name) => {
-        await addDoc(collection(db, "missions"), {
-            clientId: currentUser.id,
-            clientName: currentUser.name,
-            freelanceId: freelanceId,
-            status: 'en attente',
-            createdAt: new Date()
-        });
-        alert("Mission envoyée à " + name + " !");
-    };
-
-    // ECOUTER LES MISSIONS EN TEMPS REEL
-    function listenMissions() {
-        const q = query(collection(db, "missions"), where("freelanceId", "==", currentUser.id));
-        onSnapshot(q, (snap) => {
-            snap.forEach(change => {
-                const m = change.data();
-                if(m.status === 'en attente') {
-                    document.getElementById('mission-text').innerText = `Le client ${m.clientName} souhaite vous confier une mission.`;
-                    window.currentMissionId = change.id;
-                    document.getElementById('mission-modal').style.display = 'flex';
-                }
-            });
-            renderMissionsList();
-        });
-
-        // Ecouter aussi pour le client
-        const q2 = query(collection(db, "missions"), where("clientId", "==", currentUser.id));
-        onSnapshot(q2, () => renderMissionsList());
-    }
-
-    window.updateMission = async (newStatus) => {
-        const mRef = doc(db, "missions", window.currentMissionId);
-        await updateDoc(mRef, { status: newStatus });
-        document.getElementById('mission-modal').style.display = 'none';
-    };
-
-    window.closeMission = () => { document.getElementById('mission-modal').style.display = 'none'; };
-
-    async function renderMissionsList() {
-        const container = document.getElementById('mission-status-container');
-        container.innerHTML = "";
-        const q = query(collection(db, "missions"));
-        const snap = await getDocs(q);
+    document.getElementById('btn-save').onclick = () => {
+        // Simulation de sauvegarde locale pour la démo (le fichier image sera géré par l'input)
+        myUser.name = document.getElementById('reg-name').value;
+        myUser.phone = document.getElementById('reg-phone').value;
+        myUser.photo = "https://ui-avatars.com/api/?name=" + myUser.name; 
         
-        snap.forEach(d => {
-            const m = d.data();
-            if(m.clientId === currentUser.id || m.freelanceId === currentUser.id) {
-                const div = document.createElement('div');
-                div.className = "card";
-                const isEnCours = m.status === 'en cours';
-                div.innerHTML = `
-                    <p style="font-size:0.8rem; opacity:0.6;">Mission avec ${m.clientName}</p>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                        <span class="status-badge" style="background:${isEnCours ? '#ffc107' : '#28a745'}">${m.status.toUpperCase()}</span>
-                        ${isEnCours && currentUser.role === 'freelance' ? `<button onclick="finishMission('${d.id}')" style="background:white; color:black; border:none; padding:5px 10px; border-radius:10px; font-weight:bold; font-size:0.7rem;">TERMINER</button>` : ''}
-                    </div>
-                `;
-                container.appendChild(div);
-            }
-        });
-    }
-
-    window.finishMission = async (id) => {
-        await updateDoc(doc(db, "missions", id), { status: 'terminée' });
-        alert("Félicitations pour cette mission terminée !");
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('chat-page').classList.add('active');
+        document.getElementById('chat-target-img').src = myUser.photo;
     };
 
-    function initApp() {
-        if(currentUser) {
-            document.getElementById('hero').classList.remove('active');
-            document.getElementById('signup').classList.remove('active');
-            document.getElementById('navbar').classList.remove('hidden');
-            document.getElementById('tab-bar').classList.remove('hidden');
-            document.getElementById('nav-pfp').src = currentUser.photo;
-            listenMissions();
-            showPage('explore');
+    // LOGIQUE DE MISSION
+    document.getElementById('btn-commander').onclick = () => {
+        addMsg("received", "🔔 NOUVELLE MISSION : Le client souhaite vous embaucher. Acceptez-vous ?");
+        addMsg("received", `<button onclick="accepterMission()" style="background:white; color:black; border:none; padding:5px 10px; border-radius:5px; font-weight:bold; margin-top:5px;">ACCEPTER</button>`);
+    };
+
+    window.accepterMission = () => {
+        document.getElementById('mission-status').classList.remove('hidden');
+        document.getElementById('btn-commander').classList.add('hidden');
+        document.getElementById('btn-terminer').classList.remove('hidden');
+        addMsg("sent", "J'accepte la mission. Je commence tout de suite !");
+    };
+
+    document.getElementById('btn-terminer').onclick = () => {
+        alert("TRAVAIL TERMINÉ ✅\n\nVeuillez envoyer le paiement au numéro suivant :\n💰 0813339164");
+        document.getElementById('mission-status').classList.add('hidden');
+    };
+
+    // LOGIQUE CHAT & SÉCURITÉ
+    const sendMsg = () => {
+        let text = document.getElementById('msg-input').value;
+        if(!text) return;
+
+        // Sécurité anti-numéro
+        const phoneRegex = /(081|082|084|085|089|090|097|099|\+243)/g;
+        if(phoneRegex.test(text)) {
+            alert("Interdit : L'envoi de numéros de contact est bloqué pour votre sécurité.");
+            return;
         }
+
+        addMsg("sent", text);
+        document.getElementById('msg-input').value = "";
+    };
+
+    function addMsg(type, text) {
+        const div = document.createElement('div');
+        div.className = `msg ${type}`;
+        div.innerHTML = text;
+        document.getElementById('chat-box').appendChild(div);
+        document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
     }
 
-    window.logout = () => { localStorage.removeItem('km_user'); location.reload(); };
-    initApp();
+    document.getElementById('btn-send').onclick = sendMsg;
+    document.getElementById('btn-voice').onclick = () => alert("Enregistrement vocal...");
+
 </script>
 </body>
 </html>
