@@ -4,93 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KIN MUSALA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        .page { display: none; padding: 20px; padding-bottom: 100px; min-height: 100vh; }
         .page.active { display: block; }
         
-        .photo-picker { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); background: #000; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; }
+        .photo-picker { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; }
         .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
         
-        .btn-red { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn-red { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .btn-sec { background: #222; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; margin-top: 5px; }
         .field { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; margin-bottom: 12px; outline: none; }
         
-        #chatFlow { height: 60vh; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 12px; }
-        .msg { padding: 12px; border-radius: 15px; max-width: 85%; position: relative; }
-        .msg.mine { align-self: flex-end; background: var(--primary); border-bottom-right-radius: 2px; }
-        .msg.theirs { align-self: flex-start; background: var(--surface); border-bottom-left-radius: 2px; }
-        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; }
-        
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
-        .mission-card { background: #fff; color: #000; padding: 15px; border-radius: 12px; margin: 10px 0; text-align: center; }
-        .task-bar { background: var(--primary); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; }
+        /* Message Bubbles */
+        #chatFlow { height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 80%; line-height: 1.4; position: relative; }
+        .msg.mine { align-self: flex-end; background: var(--primary); border-bottom-right-radius: 4px; }
+        .msg.theirs { align-self: flex-start; background: var(--surface); border-bottom-left-radius: 4px; }
+        .msg img { width: 100%; border-radius: 10px; margin-top: 5px; }
+
+        /* Navigation */
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 999; }
+        .nav i { font-size: 1.5rem; color: #555; cursor: pointer; transition: 0.3s; }
+        .nav i.active { color: var(--primary); }
+
+        .task-bar { background: var(--primary); padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+        .mission-card { background: white; color: black; padding: 15px; border-radius: 12px; margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <h1 style="text-align:center; margin-top:15vh; font-size:3.5rem; font-weight:900;">KIN<br>MUSALA</h1>
-    <button class="btn-red" onclick="showAuth('signup')">S'inscrire</button>
-    <button class="btn-red" style="background:#222;" onclick="showAuth('login')">Se connecter</button>
+    <div style="text-align:center; margin-top:25vh;">
+        <h1 style="font-size: 3.5rem; font-weight: 900;">KIN MUSALA</h1>
+        <p style="opacity:0.6; margin-bottom:40px;">Elite Networking Kinshasa</p>
+        <button class="btn-red" onclick="showAuth('signup')">S'inscrire</button>
+        <button class="btn-red" style="background:#222;" onclick="showAuth('login')">Se connecter</button>
+    </div>
 </div>
 
 <div id="auth" class="page">
-    <div id="signupFields">
-        <div class="photo-picker" onclick="document.getElementById('fInp').click()"><i class="fa fa-camera"></i><img id="privew" style="display:none;"></div>
+    <h2 id="authTitle" style="margin-bottom:20px;">Inscription</h2>
+    <div id="regOnly">
+        <div class="photo-picker" onclick="document.getElementById('fInp').click()">
+            <i class="fa fa-camera"></i><img id="privew" style="display:none;">
+        </div>
         <input type="file" id="fInp" hidden accept="image/*">
-        <input type="text" id="name" placeholder="Nom complet" class="field">
-        <select id="role" class="field"><option value="client">Client</option><option value="freelance">Freelance</option></select>
+        <input type="text" id="nick" placeholder="Nom complet" class="field">
+        <select id="role" class="field">
+            <option value="client">Je suis Client</option>
+            <option value="freelance">Je suis Freelance (Expert)</option>
+        </select>
         <input type="text" id="phone" placeholder="Numéro M-Pesa" class="field">
+        <input type="text" id="job" placeholder="Métier (ex: Électricien)" class="field">
     </div>
     <input type="email" id="email" placeholder="Email" class="field">
     <input type="password" id="pass" placeholder="Mot de passe" class="field">
-    <button class="btn-red" onclick="handleAuth()">Confirmer</button>
-    <p style="text-align:center; margin-top:15px; font-size:0.8rem;" onclick="showAuth('login')">Déjà un compte ? Connectez-vous</p>
+    <button class="btn-red" onclick="runAuth()">Confirmer</button>
 </div>
 
 <div id="explore" class="page">
-    <div class="field" style="display:flex; align-items:center;"><i class="fa fa-search"></i><input type="text" id="searchInp" placeholder="Recherche intelligente..." style="background:transparent; border:none; color:white; margin-left:10px; width:100%;" onkeyup="searchUsers()"></div>
-    <div id="userList"></div>
+    <input type="text" id="searchInput" placeholder="Recherche intelligente (Nom, métier...)" class="field" onkeyup="search()">
+    <div id="users"></div>
 </div>
 
 <div id="chat" class="page">
-    <div id="taskBar" style="display:none;" class="task-bar">
-        <span>⚡ MISSION EN COURS</span>
-        <button id="endBtn" style="display:none; background:white; color:var(--primary); border:none; padding:5px 10px; border-radius:5px; font-weight:900;" onclick="finishTask()">TERMINER</button>
+    <div id="tBar" style="display:none;" class="task-bar">
+        <span>⚡ MISSION ACTIVE</span>
+        <button id="endBtn" style="display:none; background:white; color:red; border:none; padding:5px 10px; border-radius:5px;" onclick="finishWork()">TERMINER</button>
     </div>
-    <div style="display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:1px solid #333;">
-        <img id="chatPeerImg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-        <h3 id="chatPeerName">Chat</h3>
+    <div id="chatHead" style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+        <img id="pImg" src="" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+        <h3 id="pName">Expert</h3>
     </div>
     <div id="chatFlow"></div>
-    <div style="display:flex; gap:10px; align-items:center; background:var(--surface); padding:10px; border-radius:15px;">
-        <i class="fa fa-image" style="font-size:1.5rem; cursor:pointer;" onclick="document.getElementById('chatPhotoInp').click()"></i>
-        <input type="file" id="chatPhotoInp" hidden accept="image/*">
-        <input type="text" id="msg" style="flex:1; background:transparent; border:none; color:white; outline:none;" placeholder="Message...">
-        <i class="fa fa-paper-plane" style="color:var(--primary); font-size:1.5rem;" onclick="sendMsg()"></i>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+        <i class="fa fa-image" style="font-size:1.5rem; color:var(--primary);" onclick="document.getElementById('chatFile').click()"></i>
+        <input type="file" id="chatFile" hidden accept="image/*" onchange="sendPhoto(this)">
+        <input type="text" id="mInp" class="field" style="margin:0;" placeholder="Message...">
+        <i class="fa fa-paper-plane" style="font-size:1.5rem; color:var(--primary);" onclick="sendMsg()"></i>
     </div>
 </div>
 
-<div id="account" class="page">
+<div id="profile" class="page">
     <h2>Mon Compte</h2>
-    <div id="myInfos" style="margin:20px 0; background:var(--surface); padding:20px; border-radius:15px; text-align:center;"></div>
-    <button class="btn-red" style="background:#444;" onclick="logout()">Se déconnecter</button>
-    <button class="btn-red" style="margin-top:40px; opacity:0.3;" onclick="deleteAcc()">Supprimer mon compte</button>
+    <div id="myInfo" style="background:var(--surface); padding:20px; border-radius:20px; margin:20px 0; text-align:center;"></div>
+    <h3>Missions en cours :</h3>
+    <div id="myMissions" style="opacity:0.6; margin-top:10px;">Aucune mission.</div>
+    <button class="btn-red" style="background:#333; margin-top:30px;" onclick="location.reload()">Se déconnecter</button>
+    <button class="btn-sec" style="width:100%; color:gray;" onclick="alert('Compte en cours de suppression...')">Supprimer mon compte</button>
 </div>
 
-<div class="nav" id="menu" style="display:none;">
-    <i class="fa fa-search" onclick="showPage('explore')"></i>
-    <i class="fa fa-comment" onclick="showPage('chat')"></i>
-    <i class="fa fa-user" onclick="showPage('account')"></i>
+<div class="nav" id="botNav" style="display:none;">
+    <i class="fa fa-search active" onclick="nav('explore', this)"></i>
+    <i class="fa fa-comment" onclick="nav('chat', this)"></i>
+    <i class="fa fa-user" onclick="nav('profile', this)"></i>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -105,85 +122,88 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    let myData, peerId, myPhoto = "", chatPhoto = "";
+
+    let me = null;
+    let peer = null;
+    let myPhoto = "";
 
     // Inscription Photo
-    document.getElementById('fInp').onchange = e => {
-        const r = new FileReader();
-        r.onload = () => { myPhoto = r.result; document.getElementById('privew').src=myPhoto; document.getElementById('privew').style.display='block'; };
-        r.readAsDataURL(e.target.files[0]);
+    document.getElementById('fInp').onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = () => { myPhoto = reader.result; document.getElementById('privew').src=myPhoto; document.getElementById('privew').style.display='block'; };
+        reader.readAsDataURL(e.target.files[0]);
     };
 
-    // Chat Photo Sync
-    document.getElementById('chatPhotoInp').onchange = e => {
-        const r = new FileReader();
-        r.onload = () => { chatPhoto = r.result; sendMsg(true); };
-        r.readAsDataURL(e.target.files[0]);
-    };
+    window.showAuth = (m) => {
+        document.getElementById('regOnly').style.display = m==='signup'?'block':'none';
+        document.getElementById('authTitle').innerText = m==='signup'?'Inscription':'Connexion';
+        switchPage('auth');
+    }
 
-    window.showAuth = m => { document.getElementById('signupFields').style.display = m==='signup'?'block':'none'; showPage('auth'); };
-
-    window.handleAuth = async () => {
-        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+    window.runAuth = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
         try {
-            if(document.getElementById('signupFields').style.display !== 'none') {
-                const res = await createUserWithEmailAndPassword(auth, e, p);
-                const info = { name: document.getElementById('name').value, role: document.getElementById('role').value, phone: document.getElementById('phone').value, photo: myPhoto, uid: res.user.uid };
-                await setDoc(doc(db, "users", res.user.uid), info);
-            } else { await signInWithEmailAndPassword(auth, e, p); }
-        } catch (err) { alert(err.message); }
+            if(document.getElementById('regOnly').style.display !== 'none') {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                const data = { uid: res.user.uid, name: document.getElementById('nick').value, role: document.getElementById('role').value, phone: document.getElementById('phone').value, job: document.getElementById('job').value, photo: myPhoto };
+                await setDoc(doc(db, "users", res.user.uid), data);
+            } else { await signInWithEmailAndPassword(auth, email, pass); }
+        } catch(e) { alert(e.message); }
     };
 
-    onAuthStateChanged(auth, async user => {
+    onAuthStateChanged(auth, async (user) => {
         if(user) {
             const s = await getDoc(doc(db, "users", user.uid));
-            myData = s.data();
-            document.getElementById('menu').style.display='flex';
-            document.getElementById('myInfos').innerHTML = `<img src="${myData.photo}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary);"><br><h3>${myData.name}</h3><p>${myData.role}</p>`;
-            showPage('explore');
-            loadUsers();
+            me = s.data();
+            document.getElementById('myInfo').innerHTML = `<img src="${me.photo}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;"><br><b>${me.name}</b><br><small>${me.role}</small>`;
+            document.getElementById('botNav').style.display = 'flex';
+            switchPage('explore');
+            listenUsers();
         }
     });
 
-    function loadUsers() {
-        onSnapshot(collection(db, "users"), snap => {
-            const list = document.getElementById('userList');
-            list.innerHTML = "";
+    function listenUsers() {
+        onSnapshot(collection(db, "users"), (snap) => {
+            const cont = document.getElementById('users');
+            cont.innerHTML = "";
             snap.forEach(d => {
                 const u = d.data();
-                if(u.uid !== auth.currentUser.uid && u.role !== myData.role) {
-                    list.innerHTML += `<div onclick="openChat('${u.uid}', '${u.name}', '${u.photo}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-top:10px;">
+                if(u.uid !== me.uid && u.role !== me.role) {
+                    cont.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:15px; background:var(--surface); padding:15px; border-radius:15px; margin-top:10px;">
                         <img src="${u.photo}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-                        <div><b>${u.name}</b><br><small>${u.phone}</small></div>
+                        <div><b>${u.name}</b><br><small>${u.job || 'Client'}</small></div>
                     </div>`;
                 }
             });
         });
     }
 
-    window.openChat = (id, name, img) => {
-        peerId = id;
-        document.getElementById('chatPeerName').innerText = name;
-        document.getElementById('chatPeerImg').src = img;
-        showPage('chat');
-        const q = query(collection(db, "messages"), orderBy("time", "asc"));
-        onSnapshot(q, snap => {
+    window.openChat = async (id) => {
+        const s = await getDoc(doc(db, "users", id));
+        peer = s.data();
+        document.getElementById('pName').innerText = peer.name;
+        document.getElementById('pImg').src = peer.photo;
+        switchPage('chat');
+        
+        const q = query(collection(db, "convos"), orderBy("time", "asc"));
+        onSnapshot(q, (snap) => {
             const flow = document.getElementById('chatFlow');
             flow.innerHTML = "";
-            if(myData.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="requestMission()">COMMANDER LA MISSION</button>`;
+            if(me.role === 'client') flow.innerHTML = `<button class="btn-red" onclick="requestMission()">LANCER LA MISSION</button>`;
             
             snap.forEach(d => {
                 const m = d.data();
-                if((m.to === peerId && m.from === auth.currentUser.uid) || (m.from === peerId && m.to === auth.currentUser.uid)) {
-                    if(m.type === 'mission' && myData.role === 'freelance' && m.status === 'pending') {
-                        flow.innerHTML += `<div class="mission-card"><b>NOUVELLE MISSION !</b><br><button class="btn-red" onclick="acceptMission('${d.id}')">ACCEPTER</button><button class="btn-red" style="background:#333;" onclick="alert('Refusé')">REFUSER</button></div>`;
+                if((m.to === peer.uid && m.from === me.uid) || (m.from === peer.uid && m.to === me.uid)) {
+                    if(m.type === 'order' && me.role === 'freelance' && m.status === 'pending') {
+                        flow.innerHTML += `<div class="mission-card"><b>MISSION PROPOSÉE</b><br><button class="btn-red" onclick="updateMission('${d.id}', 'accepted')">ACCEPTER</button><button class="btn-sec" onclick="updateMission('${d.id}', 'declined')">REFUSER</button></div>`;
                     } else if(m.status === 'accepted') {
-                        document.getElementById('taskBar').style.display = 'flex';
-                        if(myData.role === 'client') document.getElementById('endBtn').style.display = 'block';
+                        document.getElementById('tBar').style.display = 'flex';
+                        if(me.role === 'client') document.getElementById('endBtn').style.display='block';
+                        flow.innerHTML += `<div style="text-align:center; color:orange; font-size:0.8rem;">--- Mission Acceptée ---</div>`;
                     } else {
-                        const side = m.from === auth.currentUser.uid ? 'mine' : 'theirs';
-                        let content = m.text ? `<div>${m.text}</div>` : "";
-                        if(m.image) content += `<img src="${m.image}">`;
+                        const side = m.from === me.uid ? 'mine' : 'theirs';
+                        let content = m.img ? `<img src="${m.img}">` : m.text;
                         flow.innerHTML += `<div class="msg ${side}">${content}</div>`;
                     }
                 }
@@ -192,39 +212,44 @@
         });
     };
 
-    window.sendMsg = async (isImg = false) => {
-        const text = document.getElementById('msg').value;
-        if(!isImg && text.match(/[0-9]{8,}/)) return alert("SÉCURITÉ : Pas de numéros !");
-        if(!text && !isImg) return;
-        
-        await addDoc(collection(db, "messages"), { 
-            from: auth.currentUser.uid, to: peerId, 
-            text: text, image: isImg ? chatPhoto : null, 
-            time: Date.now() 
-        });
-        document.getElementById('msg').value = "";
-        chatPhoto = "";
+    window.sendMsg = async () => {
+        const t = document.getElementById('mInp').value;
+        if(t.match(/[0-9]{8,}/)) return alert("SÉCURITÉ: Envoi de numéro interdit !");
+        if(!t) return;
+        await addDoc(collection(db, "convos"), { from: me.uid, to: peer.uid, text: t, time: Date.now() });
+        document.getElementById('mInp').value = "";
+    };
+
+    window.sendPhoto = (input) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+            await addDoc(collection(db, "convos"), { from: me.uid, to: peer.uid, img: reader.result, time: Date.now() });
+        };
+        reader.readAsDataURL(input.files[0]);
     };
 
     window.requestMission = async () => {
-        await addDoc(collection(db, "messages"), { from: auth.currentUser.uid, to: peerId, type: 'mission', status: 'pending', time: Date.now() });
+        await addDoc(collection(db, "convos"), { from: me.uid, to: peer.uid, text: "Mission demandée", type: "order", status: "pending", time: Date.now() });
     };
 
-    window.acceptMission = async id => {
-        await updateDoc(doc(db, "messages", id), { status: 'accepted' });
-        await addDoc(collection(db, "messages"), { from: auth.currentUser.uid, to: peerId, text: "Mission acceptée ! Travail en cours...", time: Date.now() });
+    window.updateMission = async (id, stat) => {
+        await updateDoc(doc(db, "convos", id), { status: stat });
+        if(stat === 'accepted') alert("Mission acceptée ! Travaillez bien.");
     };
 
-    window.finishTask = () => {
-        alert("TRAVAIL FINI ! Payez au 0813339164 via M-Pesa");
-        document.getElementById('taskBar').style.display = 'none';
+    window.finishWork = () => {
+        alert("TRAVAIL TERMINÉ !\n\nClient, envoyez le paiement au numéro central :\n📞 0813339164\n\nNous validerons dès réception.");
+        document.getElementById('tBar').style.display='none';
     };
 
-    window.logout = () => signOut(auth).then(() => location.reload());
-    window.deleteAcc = () => confirm("Supprimer définitivement ?") && deleteUser(auth.currentUser).then(() => location.reload());
-    
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    window.nav = (id, el) => {
+        document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        switchPage(id);
+    };
+
+    function switchPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 </script>
