@@ -26,14 +26,7 @@
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align:center; margin-top:20vh;">
-        <h1 style="font-size:3.5rem; font-weight:900; letter-spacing:-2px;">KIN MUSALA</h1>
-        <p id="loadingMsg" style="color:var(--primary); margin-top:10px; font-weight:bold;">CHARGEMENT...</p>
-        <div id="heroBtns" style="display:none; margin-top:20px;">
-            <button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button>
-            <button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button>
-        </div>
-    </div>
+    <div style="text-align:center; margin-top:20vh;"><h1 style="font-size:3rem; font-weight:900;">KIN MUSALA</h1><button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button><button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button></div>
 </div>
 
 <div id="auth" class="page">
@@ -71,14 +64,14 @@
     <div id="myProf" style="text-align:center;"></div>
     <button class="btn-red" onclick="editProfile()">MODIFIER MON PROFIL</button>
     <div id="myMissions" style="margin-top:20px;"></div>
-    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="handleLogout()">DÉCONNEXION</button>
+    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="location.reload()">DÉCONNEXION</button>
 </div>
 
 <div id="nav" class="nav" style="display:none;"><i class="fa fa-search active" onclick="tab('explore',this)"></i><i class="fa fa-comment" onclick="tab('msg_list',this)"></i><i class="fa fa-user" onclick="tab('account',this)"></i></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const cfg = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
@@ -87,7 +80,6 @@
 
     document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload=()=>{photo=r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block';}; r.readAsDataURL(e.target.files[0]); };
     window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
-    
     window.handleAuth = async () => {
         const email = document.getElementById('aEmail').value, pass = document.getElementById('aPass').value;
         try {
@@ -99,30 +91,14 @@
         } catch (e) { alert(e.message); }
     };
 
-    // LOGIQUE DE VÉRIFICATION AUTO AU DÉMARRAGE
     onAuthStateChanged(auth, async (u) => {
-        if(u) { 
-            const s = await getDoc(doc(db, "users", u.uid)); 
-            if(s.exists()) {
-                me = s.data(); 
-                document.getElementById('nav').style.display='flex'; 
-                pg('explore'); 
-                loadUsers(); loadConvs(); renderAcc(); 
-            }
-        } else {
-            // Si pas de compte, on cache le message "Chargement" et on montre les boutons
-            document.getElementById('loadingMsg').style.display = 'none';
-            document.getElementById('heroBtns').style.display = 'block';
-            pg('hero');
-        }
+        if(u) { const s = await getDoc(doc(db, "users", u.uid)); me = s.data(); document.getElementById('nav').style.display='flex'; pg('explore'); loadUsers(); loadConvs(); renderAcc(); }
     });
-
-    window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
 
     function loadUsers() {
         onSnapshot(collection(db, "users"), (snap) => {
             const l = document.getElementById('uList'); l.innerHTML = "";
-            snap.forEach(d => { const u = d.data(); if(me && u.uid !== me.uid && u.role !== me.role) {
+            snap.forEach(d => { const u = d.data(); if(u.uid !== me.uid && u.role !== me.role) {
                 l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`;
             }});
         });
