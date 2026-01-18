@@ -14,23 +14,23 @@
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
         .page.active { display: block; }
 
-        /* DESIGN DE L'IMAGE : CONTAINER AUTH */
-        #auth { 
+        /* DESIGN AUTHENTIFICATION (TON IMAGE) */
+        #auth-card { 
             background: linear-gradient(180deg, #1A1C29 0%, #0D0E14 100%);
             border-radius: 30px;
-            margin-top: 20px;
             padding: 30px 20px;
             border: 1px solid rgba(255,255,255,0.05);
+            margin-top: 10px;
         }
 
         h2.title { text-align: center; font-size: 1.8rem; margin-bottom: 30px; font-weight: 800; }
 
-        /* DESIGN PHOTO-PICKER (IMAGE) */
+        /* DESIGN PHOTO-PICKER (DOUBLE CERCLE ROUGE) */
         .photo-container { position: relative; width: 130px; height: 130px; margin: 0 auto 30px; }
         .photo-picker {
             width: 100%; height: 100%;
             border-radius: 50%;
-            border: 2px solid var(--primary); /* Cercle extérieur */
+            border: 2px solid var(--primary); /* Cercle extérieur plein */
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; position: relative; overflow: hidden;
         }
@@ -38,12 +38,12 @@
             content: ''; position: absolute;
             width: 85%; height: 85%;
             border-radius: 50%;
-            border: 2px dashed var(--primary); /* Cercle pointillé intérieur */
+            border: 2px dashed var(--primary); /* Cercle intérieur pointillé */
         }
         .photo-picker i { font-size: 2rem; color: white; z-index: 2; }
         .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 3; }
 
-        /* LABELS ET CHAMPS (IMAGE) */
+        /* LABELS ET CHAMPS */
         .label-group { margin-bottom: 15px; }
         .label-group label { display: block; color: #888; font-size: 0.9rem; margin-bottom: 8px; margin-left: 5px; }
         
@@ -57,11 +57,9 @@
 
         .btn-red { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
         
-        /* NAVIGATION */
         .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav i { font-size: 1.4rem; color: #555; } .nav i.active { color: var(--primary); }
 
-        /* MESSAGES */
         .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; }
         .msg.mine { align-self: flex-end; background: var(--primary); margin-left: auto; }
         .msg.theirs { align-self: flex-start; background: var(--surface); }
@@ -80,45 +78,46 @@
 </div>
 
 <div id="auth" class="page">
-    <h2 class="title">Détails du profil</h2>
-    
-    <div class="photo-container">
-        <div class="photo-picker" onclick="document.getElementById('fInp').click()">
-            <i id="camIcon" class="fa fa-camera"></i>
-            <img id="pview" style="display:none;">
+    <div id="auth-card">
+        <h2 class="title">Détails du profil</h2>
+        
+        <div class="photo-container">
+            <div class="photo-picker" onclick="document.getElementById('fInp').click()">
+                <i id="camIcon" class="fa fa-camera"></i>
+                <img id="pview" style="display:none;">
+            </div>
         </div>
-    </div>
-    <input type="file" id="fInp" hidden accept="image/*">
+        <input type="file" id="fInp" hidden accept="image/*">
 
-    <div id="regFields">
+        <div id="regFields">
+            <div class="label-group">
+                <label>Nom complet</label>
+                <input type="text" id="rName" placeholder="Ex: Jean Mukendi" class="field">
+            </div>
+            <div class="label-group">
+                <label>Votre rôle</label>
+                <select id="rRole" class="field" onchange="document.getElementById('jobGroup').style.display=this.value==='freelance'?'block':'none'">
+                    <option value="client">Client</option>
+                    <option value="freelance">Freelance</option>
+                </select>
+            </div>
+            <div class="label-group" id="jobGroup" style="display:none;">
+                <label>Métier (ex: Maçon)</label>
+                <input type="text" id="rJob" placeholder="Ex: Maçon" class="field">
+            </div>
+        </div>
+
         <div class="label-group">
-            <label>Nom complet</label>
-            <input type="text" id="rName" placeholder="Ex: Jean Mukendi" class="field">
+            <label>Adresse Email</label>
+            <input type="email" id="aEmail" placeholder="Ex: jean@gmail.com" class="field">
         </div>
         <div class="label-group">
-            <label>Votre rôle</label>
-            <select id="rRole" class="field" onchange="document.getElementById('jobGroup').style.display=this.value==='freelance'?'block':'none'">
-                <option value="client">Client</option>
-                <option value="freelance">Freelance</option>
-            </select>
+            <label>Mot de passe</label>
+            <input type="password" id="aPass" placeholder="••••••••" class="field">
         </div>
-        <div class="label-group" id="jobGroup" style="display:none;">
-            <label>Métier</label>
-            <input type="text" id="rJob" placeholder="Ex: Maçon" class="field">
-        </div>
-    </div>
 
-    <div class="label-group">
-        <label>Adresse Email</label>
-        <input type="email" id="aEmail" placeholder="Ex: jean@gmail.com" class="field">
+        <button class="btn-red" onclick="handleAuth()">VALIDER</button>
     </div>
-    
-    <div class="label-group">
-        <label>Mot de passe</label>
-        <input type="password" id="aPass" placeholder="••••••••" class="field">
-    </div>
-
-    <button class="btn-red" onclick="handleAuth()">VALIDER</button>
 </div>
 
 <div id="explore" class="page">
@@ -154,7 +153,6 @@
     const app = initializeApp(cfg); const auth = getAuth(app); const db = getFirestore(app);
     let me = null, photo = "";
 
-    // Photo Preview
     document.getElementById('fInp').onchange = (e) => { 
         const r = new FileReader(); 
         r.onload=()=>{
@@ -167,14 +165,14 @@
 
     window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
 
-    // LOGIQUE DE REDIRECTION AUTO (Ton souhait principal)
+    // 1. REDIRECTION AUTO (POUR CEUX QUI ONT UN COMPTE)
     onAuthStateChanged(auth, async (u) => {
         if(u) { 
             const s = await getDoc(doc(db, "users", u.uid)); 
             if(s.exists()) {
                 me = s.data(); 
                 document.getElementById('nav').style.display='flex'; 
-                pg('explore'); // Redirige vers l'app directement
+                pg('explore'); 
                 loadUsers(); loadConvs(); renderAcc(); 
             }
         } else {
@@ -182,14 +180,21 @@
         }
     });
 
+    // 2. CORRECTION INSCRIPTION (POUR ENTRER DIRECTEMENT APPRÈS VALIDER)
     window.handleAuth = async () => {
         const email = document.getElementById('aEmail').value, pass = document.getElementById('aPass').value;
+        if(!email || !pass) return alert("Veuillez remplir les champs.");
         try {
             if(document.getElementById('regFields').style.display !== 'none'){
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 me = { uid: res.user.uid, name: document.getElementById('rName').value, role: document.getElementById('rRole').value, job: document.getElementById('rJob').value || "", photo: photo, status: "Libre" };
                 await setDoc(doc(db, "users", res.user.uid), me);
-            } else { await signInWithEmailAndPassword(auth, email, pass); }
+                // On force l'entrée dans l'app ici
+                document.getElementById('nav').style.display='flex'; 
+                pg('explore'); loadUsers(); loadConvs(); renderAcc();
+            } else { 
+                await signInWithEmailAndPassword(auth, email, pass); 
+            }
         } catch (e) { alert(e.message); }
     };
 
@@ -197,7 +202,6 @@
     window.pg = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
     window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); pg(id); };
 
-    // Les autres fonctions (loadUsers, loadConvs, etc.) restent identiques à ton code original
     function loadUsers() { onSnapshot(collection(db, "users"), (snap) => { const l = document.getElementById('uList'); l.innerHTML = ""; snap.forEach(d => { const u = d.data(); if(me && u.uid !== me.uid && u.role !== me.role) { l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`; }}); }); }
     function loadConvs() { onSnapshot(query(collection(db, "messages"), orderBy("time", "desc")), async (snap) => { const l = document.getElementById('convs'); const seen = new Set(); l.innerHTML = ""; for (const d of snap.docs) { const m = d.data(); const t = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null); if(t && !seen.has(t)) { seen.add(t); const u = (await getDoc(doc(db, "users", t))).data(); l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`; } } }); }
     function renderAcc() { document.getElementById('myProf').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p>`; }
