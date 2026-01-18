@@ -21,24 +21,50 @@
         .msg.theirs { align-self: flex-start; background: var(--surface); }
         .order-box { background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin: 10px 0; }
         .mission-badge { background: var(--primary); padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 0.8rem; }
+        
+        /* RESTAURATION DU DESIGN DU CERCLE PHOTO */
+        .photo-picker {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 3px dashed var(--primary); /* Les fameuses barres rouges autour */
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        .photo-picker img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-picker i { font-size: 2rem; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align:center; margin-top:20vh;"><h1 style="font-size:3rem; font-weight:900;">KIN MUSALA</h1><button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button><button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button></div>
+    <div style="text-align:center; margin-top:25vh;">
+        <h1 style="font-size:3rem; font-weight:900;">KIN MUSALA</h1>
+        <div id="heroActions" style="display:none; margin-top:30px;">
+            <button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button>
+            <button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button>
+        </div>
+    </div>
 </div>
 
 <div id="auth" class="page">
     <div id="regFields">
-        <div style="text-align:center;"><img id="pview" style="width:100px; height:100px; border-radius:50%; object-fit:cover; display:none; margin:10px auto; border:2px solid var(--primary);"></div>
-        <button class="btn-red" style="background:#333;" onclick="document.getElementById('fInp').click()">PHOTO</button>
+        <div class="photo-picker" onclick="document.getElementById('fInp').click()">
+            <i id="camIcon" class="fa fa-camera"></i>
+            <img id="pview" style="display:none;">
+        </div>
         <input type="file" id="fInp" hidden accept="image/*">
+        
         <input type="text" id="rName" placeholder="Nom complet" class="field">
         <select id="rRole" class="field" onchange="document.getElementById('rJob').style.display=this.value==='freelance'?'block':'none'"><option value="client">Client</option><option value="freelance">Freelance</option></select>
         <input type="text" id="rJob" placeholder="Métier (ex: Maçon)" class="field" style="display:none;">
     </div>
-    <input type="email" id="aEmail" placeholder="Email" class="field"><input type="password" id="aPass" placeholder="Mdp" class="field">
+    <input type="email" id="aEmail" placeholder="Email" class="field">
+    <input type="password" id="aPass" placeholder="Mdp" class="field">
     <button class="btn-red" onclick="handleAuth()">VALIDER</button>
 </div>
 
@@ -64,22 +90,34 @@
     <div id="myProf" style="text-align:center;"></div>
     <button class="btn-red" onclick="editProfile()">MODIFIER MON PROFIL</button>
     <div id="myMissions" style="margin-top:20px;"></div>
-    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="location.reload()">DÉCONNEXION</button>
+    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="handleLogout()">DÉCONNEXION</button>
 </div>
 
 <div id="nav" class="nav" style="display:none;"><i class="fa fa-search active" onclick="tab('explore',this)"></i><i class="fa fa-comment" onclick="tab('msg_list',this)"></i><i class="fa fa-user" onclick="tab('account',this)"></i></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const cfg = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
     const app = initializeApp(cfg); const auth = getAuth(app); const db = getFirestore(app);
     let me = null, peer = null, photo = "", sub = null;
 
-    document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload=()=>{photo=r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block';}; r.readAsDataURL(e.target.files[0]); };
+    // Gestion de la photo avec l'aperçu dans le rond
+    document.getElementById('fInp').onchange = (e) => { 
+        const r = new FileReader(); 
+        r.onload=()=>{
+            photo=r.result; 
+            document.getElementById('pview').src=photo; 
+            document.getElementById('pview').style.display='block';
+            document.getElementById('camIcon').style.display='none';
+        }; 
+        r.readAsDataURL(e.target.files[0]); 
+    };
+
     window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
+    
     window.handleAuth = async () => {
         const email = document.getElementById('aEmail').value, pass = document.getElementById('aPass').value;
         try {
@@ -91,14 +129,28 @@
         } catch (e) { alert(e.message); }
     };
 
+    // LOGIQUE DE PERSISTANCE : Redirection auto si déjà connecté
     onAuthStateChanged(auth, async (u) => {
-        if(u) { const s = await getDoc(doc(db, "users", u.uid)); me = s.data(); document.getElementById('nav').style.display='flex'; pg('explore'); loadUsers(); loadConvs(); renderAcc(); }
+        if(u) { 
+            const s = await getDoc(doc(db, "users", u.uid)); 
+            if(s.exists()) {
+                me = s.data(); 
+                document.getElementById('nav').style.display='flex'; 
+                pg('explore'); // On saute le formulaire !
+                loadUsers(); loadConvs(); renderAcc(); 
+            }
+        } else {
+            // Si pas de compte, on montre les boutons sur l'écran Logo
+            document.getElementById('heroActions').style.display = 'block';
+        }
     });
+
+    window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
 
     function loadUsers() {
         onSnapshot(collection(db, "users"), (snap) => {
             const l = document.getElementById('uList'); l.innerHTML = "";
-            snap.forEach(d => { const u = d.data(); if(u.uid !== me.uid && u.role !== me.role) {
+            snap.forEach(d => { const u = d.data(); if(me && u.uid !== me.uid && u.role !== me.role) {
                 l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`;
             }});
         });
