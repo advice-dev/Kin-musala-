@@ -10,66 +10,46 @@
         :root { --primary: #FF4B3A; --bg: #0D0E14; --surface: #1A1C29; --text: #FFFFFF; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); }
-        
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
         .page.active { display: block; }
-
-        /* DESIGN AUTHENTIFICATION (TON IMAGE) */
+        
+        /* DESIGN AUTH (IMAGE) */
         #auth-card { 
             background: linear-gradient(180deg, #1A1C29 0%, #0D0E14 100%);
-            border-radius: 30px;
-            padding: 30px 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-top: 10px;
+            border-radius: 30px; padding: 30px 20px; border: 1px solid rgba(255,255,255,0.05); margin-top: 10px;
         }
-
-        h2.title { text-align: center; font-size: 1.8rem; margin-bottom: 30px; font-weight: 800; }
-
-        /* DESIGN PHOTO-PICKER (DOUBLE CERCLE ROUGE) */
-        .photo-container { position: relative; width: 130px; height: 130px; margin: 0 auto 30px; }
+        
+        /* CERCLE PHOTO ROUGE */
+        .photo-container { position: relative; width: 120px; height: 120px; margin: 0 auto 25px; }
         .photo-picker {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 2px solid var(--primary); /* Cercle extérieur plein */
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; position: relative; overflow: hidden;
+            width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden;
         }
         .photo-picker::after {
-            content: ''; position: absolute;
-            width: 85%; height: 85%;
-            border-radius: 50%;
-            border: 2px dashed var(--primary); /* Cercle intérieur pointillé */
+            content: ''; position: absolute; width: 85%; height: 85%; border-radius: 50%; border: 2px dashed var(--primary);
         }
         .photo-picker i { font-size: 2rem; color: white; z-index: 2; }
         .photo-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 3; }
 
-        /* LABELS ET CHAMPS */
-        .label-group { margin-bottom: 15px; }
-        .label-group label { display: block; color: #888; font-size: 0.9rem; margin-bottom: 8px; margin-left: 5px; }
-        
-        .field { 
-            background: #000000; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: white; padding: 16px; border-radius: 15px; 
-            width: 100%; outline: none; font-size: 1rem;
-        }
-        .field::placeholder { color: #444; }
+        .label-group { margin-bottom: 12px; }
+        .label-group label { display: block; color: #888; font-size: 0.85rem; margin-bottom: 6px; margin-left: 5px; }
 
         .btn-red { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .field { background: #000; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 12px; width: 100%; outline: none; }
         
         .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #161823; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav i { font-size: 1.4rem; color: #555; } .nav i.active { color: var(--primary); }
-
         .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; }
         .msg.mine { align-self: flex-end; background: var(--primary); margin-left: auto; }
         .msg.theirs { align-self: flex-start; background: var(--surface); }
+        .order-box { background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <div id="hero" class="page active">
-    <div style="text-align:center; margin-top:30vh;">
-        <h1 style="font-size:3.5rem; font-weight:900;">KIN MUSALA</h1>
+    <div style="text-align:center; margin-top:25vh;">
+        <h1 style="font-size:3rem; font-weight:900;">KIN MUSALA</h1>
         <div id="heroActions" style="display:none; margin-top:30px;">
             <button class="btn-red" onclick="showAuth('signup')">S'INSCRIRE</button>
             <button class="btn-red" style="background:#222;" onclick="showAuth('login')">CONNEXION</button>
@@ -79,10 +59,9 @@
 
 <div id="auth" class="page">
     <div id="auth-card">
-        <h2 class="title">Détails du profil</h2>
-        
-        <div class="photo-container">
-            <div class="photo-picker" onclick="document.getElementById('fInp').click()">
+        <h2 style="text-align:center; margin-bottom:20px;">Détails du profil</h2>
+        <div class="photo-container" onclick="document.getElementById('fInp').click()">
+            <div class="photo-picker">
                 <i id="camIcon" class="fa fa-camera"></i>
                 <img id="pview" style="display:none;">
             </div>
@@ -90,121 +69,88 @@
         <input type="file" id="fInp" hidden accept="image/*">
 
         <div id="regFields">
-            <div class="label-group">
-                <label>Nom complet</label>
-                <input type="text" id="rName" placeholder="Ex: Jean Mukendi" class="field">
-            </div>
-            <div class="label-group">
-                <label>Votre rôle</label>
-                <select id="rRole" class="field" onchange="document.getElementById('jobGroup').style.display=this.value==='freelance'?'block':'none'">
-                    <option value="client">Client</option>
-                    <option value="freelance">Freelance</option>
+            <div class="label-group"><label>Nom complet</label><input type="text" id="rName" placeholder="Ex: Jean Mukendi" class="field"></div>
+            <div class="label-group"><label>Votre rôle</label>
+                <select id="rRole" class="field" onchange="document.getElementById('rJob').parentElement.style.display=this.value==='freelance'?'block':'none'">
+                    <option value="client">Client</option><option value="freelance">Freelance</option>
                 </select>
             </div>
-            <div class="label-group" id="jobGroup" style="display:none;">
-                <label>Métier (ex: Maçon)</label>
-                <input type="text" id="rJob" placeholder="Ex: Maçon" class="field">
-            </div>
+            <div class="label-group" style="display:none;"><label>Métier</label><input type="text" id="rJob" placeholder="Ex: Maçon" class="field"></div>
         </div>
-
-        <div class="label-group">
-            <label>Adresse Email</label>
-            <input type="email" id="aEmail" placeholder="Ex: jean@gmail.com" class="field">
-        </div>
-        <div class="label-group">
-            <label>Mot de passe</label>
-            <input type="password" id="aPass" placeholder="••••••••" class="field">
-        </div>
-
+        <div class="label-group"><label>Email</label><input type="email" id="aEmail" placeholder="jean@gmail.com" class="field"></div>
+        <div class="label-group"><label>Mot de passe</label><input type="password" id="aPass" placeholder="Mdp" class="field"></div>
         <button class="btn-red" onclick="handleAuth()">VALIDER</button>
     </div>
 </div>
 
 <div id="explore" class="page">
-    <input type="text" id="srch" placeholder="Rechercher un métier..." class="field" onkeyup="search()">
+    <input type="text" id="srch" placeholder="Rechercher..." class="field">
     <div id="uList"></div>
 </div>
-
 <div id="msg_list" class="page"><h2>Messages</h2><div id="convs"></div></div>
-
 <div id="chat" class="page">
-    <div style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #333; padding-bottom:10px;">
-        <i class="fa fa-arrow-left" onclick="pg('msg_list')"></i><img id="pImg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"><b id="pName">...</b>
+    <div id="chatHead" style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #333; padding-bottom:10px;">
+        <i class="fa fa-arrow-left" onclick="pg('msg_list')"></i><img id="pImg" style="width:40px; height:40px; border-radius:50%;"><b id="pName">...</b>
     </div>
     <div id="chatFlow" style="height:55vh; overflow-y:auto; display:flex; flex-direction:column; padding:15px 0;"></div>
-    <div style="display:flex; gap:10px;">
-        <input type="text" id="mInp" class="field" style="margin:0; flex:1;" placeholder="Message..."><button class="btn-red" style="width:50px; margin:0;" onclick="send()"><i class="fa fa-paper-plane"></i></button>
-    </div>
+    <div style="display:flex; gap:10px;"><input type="text" id="mInp" class="field" style="flex:1;"><button class="btn-red" style="width:50px; margin:0;" onclick="send()"><i class="fa fa-paper-plane"></i></button></div>
 </div>
-
-<div id="account" class="page">
-    <div id="myProf" style="text-align:center;"></div>
-    <button class="btn-red" style="background:#333; margin-top:20px;" onclick="handleLogout()">DÉCONNEXION</button>
-</div>
-
+<div id="account" class="page"><div id="myProf" style="text-align:center;"></div><button class="btn-red" style="background:#333;" onclick="location.reload()">DÉCONNEXION</button></div>
 <div id="nav" class="nav" style="display:none;"><i class="fa fa-search active" onclick="tab('explore',this)"></i><i class="fa fa-comment" onclick="tab('msg_list',this)"></i><i class="fa fa-user" onclick="tab('account',this)"></i></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const cfg = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
     const app = initializeApp(cfg); const auth = getAuth(app); const db = getFirestore(app);
-    let me = null, photo = "";
+    let me = null, peer = null, photo = "", sub = null;
 
-    document.getElementById('fInp').onchange = (e) => { 
-        const r = new FileReader(); 
-        r.onload=()=>{
-            photo=r.result; document.getElementById('pview').src=photo; 
-            document.getElementById('pview').style.display='block';
-            document.getElementById('camIcon').style.display='none';
-        }; 
-        r.readAsDataURL(e.target.files[0]); 
-    };
+    // SÉCURITÉ ANTI-NUMÉRO
+    function checkSafe(t) {
+        const phone = /(\+?\d[\s.-]?){8,}/g;
+        if(phone.test(t)) { alert("Interdit de partager des numéros !"); return false; }
+        return true;
+    }
 
-    window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
-
-    // 1. REDIRECTION AUTO (POUR CEUX QUI ONT UN COMPTE)
     onAuthStateChanged(auth, async (u) => {
         if(u) { 
             const s = await getDoc(doc(db, "users", u.uid)); 
-            if(s.exists()) {
-                me = s.data(); 
-                document.getElementById('nav').style.display='flex'; 
-                pg('explore'); 
-                loadUsers(); loadConvs(); renderAcc(); 
-            }
-        } else {
-            document.getElementById('heroActions').style.display = 'block';
-        }
+            if(s.exists()){
+                me = s.data(); document.getElementById('nav').style.display='flex'; pg('explore'); loadUsers(); loadConvs(); renderAcc(); 
+            } else { document.getElementById('heroActions').style.display='block'; }
+        } else { document.getElementById('heroActions').style.display='block'; }
     });
 
-    // 2. CORRECTION INSCRIPTION (POUR ENTRER DIRECTEMENT APPRÈS VALIDER)
     window.handleAuth = async () => {
         const email = document.getElementById('aEmail').value, pass = document.getElementById('aPass').value;
-        if(!email || !pass) return alert("Veuillez remplir les champs.");
         try {
             if(document.getElementById('regFields').style.display !== 'none'){
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                me = { uid: res.user.uid, name: document.getElementById('rName').value, role: document.getElementById('rRole').value, job: document.getElementById('rJob').value || "", photo: photo, status: "Libre" };
+                me = { uid: res.user.uid, name: document.getElementById('rName').value, role: document.getElementById('rRole').value, job: document.getElementById('rJob').value, photo: photo, status: "Libre" };
                 await setDoc(doc(db, "users", res.user.uid), me);
-                // On force l'entrée dans l'app ici
-                document.getElementById('nav').style.display='flex'; 
-                pg('explore'); loadUsers(); loadConvs(); renderAcc();
-            } else { 
-                await signInWithEmailAndPassword(auth, email, pass); 
-            }
+                pg('explore'); document.getElementById('nav').style.display='flex';
+            } else { await signInWithEmailAndPassword(auth, email, pass); }
         } catch (e) { alert(e.message); }
     };
 
-    window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
-    window.pg = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
-    window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); pg(id); };
+    window.send = async () => { 
+        const t = document.getElementById('mInp').value; 
+        if(!t || !checkSafe(t)) return;
+        await addDoc(collection(db, "messages"), { from: me.uid, to: peer.uid, text: t, time: Date.now() }); 
+        document.getElementById('mInp').value = ""; 
+    };
 
+    // Fonctions de chargement (Identiques à ton code d'origine)
     function loadUsers() { onSnapshot(collection(db, "users"), (snap) => { const l = document.getElementById('uList'); l.innerHTML = ""; snap.forEach(d => { const u = d.data(); if(me && u.uid !== me.uid && u.role !== me.role) { l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`; }}); }); }
     function loadConvs() { onSnapshot(query(collection(db, "messages"), orderBy("time", "desc")), async (snap) => { const l = document.getElementById('convs'); const seen = new Set(); l.innerHTML = ""; for (const d of snap.docs) { const m = d.data(); const t = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null); if(t && !seen.has(t)) { seen.add(t); const u = (await getDoc(doc(db, "users", t))).data(); l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`; } } }); }
+    window.openChat = async (id) => { const s = await getDoc(doc(db, "users", id)); peer = s.data(); document.getElementById('pImg').src = peer.photo; document.getElementById('pName').innerText = peer.name; pg('chat'); if(sub) sub(); sub = onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => { const f = document.getElementById('chatFlow'); f.innerHTML = ""; snap.forEach(d => { const m = d.data(); if((m.from === me.uid && m.to === peer.uid) || (m.from === peer.uid && m.to === me.uid)) { f.innerHTML += `<div class="msg ${m.from === me.uid ? 'mine':'theirs'}">${m.text}</div>`; }}); f.scrollTop = f.scrollHeight; }); };
     function renderAcc() { document.getElementById('myProf').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p>`; }
+    window.pg = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
+    window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); pg(id); };
+    document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload=()=>{photo=r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block'; document.getElementById('camIcon').style.display='none';}; r.readAsDataURL(e.target.files[0]); };
+    window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
 </script>
 </body>
 </html>
