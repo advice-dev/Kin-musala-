@@ -13,13 +13,11 @@
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
         .page.active { display: block; }
         
-        /* DESIGN AUTH (IMAGE) */
         #auth-card { 
             background: linear-gradient(180deg, #1A1C29 0%, #0D0E14 100%);
             border-radius: 30px; padding: 30px 20px; border: 1px solid rgba(255,255,255,0.05); margin-top: 10px;
         }
         
-        /* CERCLE PHOTO ROUGE */
         .photo-container { position: relative; width: 120px; height: 120px; margin: 0 auto 25px; }
         .photo-picker {
             width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary);
@@ -42,7 +40,6 @@
         .msg { padding: 12px; border-radius: 15px; max-width: 80%; margin-bottom: 10px; }
         .msg.mine { align-self: flex-end; background: var(--primary); margin-left: auto; }
         .msg.theirs { align-self: flex-start; background: var(--surface); }
-        .order-box { background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -101,13 +98,12 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const cfg = { apiKey: "AIzaSyDX2i_klsx1rdyBWAv5Wp4B4uAQ48nMG6k", authDomain: "kin-musala.firebaseapp.com", projectId: "kin-musala", storageBucket: "kin-musala.firebasestorage.app", messagingSenderId: "1055942721226", appId: "1:1055942721226:web:a59dffc178245dfba4be33" };
     const app = initializeApp(cfg); const auth = getAuth(app); const db = getFirestore(app);
     let me = null, peer = null, photo = "", sub = null;
 
-    // SÉCURITÉ ANTI-NUMÉRO
     function checkSafe(t) {
         const phone = /(\+?\d[\s.-]?){8,}/g;
         if(phone.test(t)) { alert("Interdit de partager des numéros !"); return false; }
@@ -142,14 +138,38 @@
         document.getElementById('mInp').value = ""; 
     };
 
-    // Fonctions de chargement (Identiques à ton code d'origine)
+    // --- MODIFICATION ICI : COMPRESSION IMAGE ---
+    document.getElementById('fInp').onchange = (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 250; 
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                photo = canvas.toDataURL('image/jpeg', 0.7); 
+                document.getElementById('pview').src = photo;
+                document.getElementById('pview').style.display = 'block';
+                document.getElementById('camIcon').style.display = 'none';
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+    // --- FIN MODIFICATION ---
+
     function loadUsers() { onSnapshot(collection(db, "users"), (snap) => { const l = document.getElementById('uList'); l.innerHTML = ""; snap.forEach(d => { const u = d.data(); if(me && u.uid !== me.uid && u.role !== me.role) { l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><b>${u.name}</b><br><small>${u.job || u.role}</small></div>`; }}); }); }
-    function loadConvs() { onSnapshot(query(collection(db, "messages"), orderBy("time", "desc")), async (snap) => { const l = document.getElementById('convs'); const seen = new Set(); l.innerHTML = ""; for (const d of snap.docs) { const m = d.data(); const t = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null); if(t && !seen.has(t)) { seen.add(t); const u = (await getDoc(doc(db, "users", t))).data(); l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`; } } }); }
+    function loadConvs() { onSnapshot(query(collection(db, "messages"), orderBy("time", "desc")), async (snap) => { const l = document.getElementById('convs'); const seen = new Set(); l.innerHTML = ""; for (const d of snap.docs) { const m = d.data(); const t = m.from === me.uid ? m.to : (m.to === me.uid ? m.from : null); if(t && !seen.has(t)) { seen.add(t); const u = (await getDoc(doc(db, "users", t))).data(); if(u) l.innerHTML += `<div onclick="openChat('${u.uid}')" style="display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px; border-radius:10px; margin-top:10px;"><img src="${u.photo}" style="width:40px; height:40px; border-radius:50%;"><div><b>${u.name}</b><br><small>${m.text}</small></div></div>`; } } }); }
     window.openChat = async (id) => { const s = await getDoc(doc(db, "users", id)); peer = s.data(); document.getElementById('pImg').src = peer.photo; document.getElementById('pName').innerText = peer.name; pg('chat'); if(sub) sub(); sub = onSnapshot(query(collection(db, "messages"), orderBy("time", "asc")), (snap) => { const f = document.getElementById('chatFlow'); f.innerHTML = ""; snap.forEach(d => { const m = d.data(); if((m.from === me.uid && m.to === peer.uid) || (m.from === peer.uid && m.to === me.uid)) { f.innerHTML += `<div class="msg ${m.from === me.uid ? 'mine':'theirs'}">${m.text}</div>`; }}); f.scrollTop = f.scrollHeight; }); };
     function renderAcc() { document.getElementById('myProf').innerHTML = `<img src="${me.photo}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);"><br><h2>${me.name}</h2><p>${me.job || me.role}</p>`; }
     window.pg = (id) => { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); };
     window.tab = (id, el) => { document.querySelectorAll('.nav i').forEach(i => i.classList.remove('active')); el.classList.add('active'); pg(id); };
-    document.getElementById('fInp').onchange = (e) => { const r = new FileReader(); r.onload=()=>{photo=r.result; document.getElementById('pview').src=photo; document.getElementById('pview').style.display='block'; document.getElementById('camIcon').style.display='none';}; r.readAsDataURL(e.target.files[0]); };
     window.showAuth = (m) => { document.getElementById('regFields').style.display=m==='signup'?'block':'none'; pg('auth'); };
 </script>
 </body>
